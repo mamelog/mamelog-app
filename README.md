@@ -258,6 +258,76 @@ Flavor (`dev` / `stg` / `prod`) で Firebase プロジェクトや接続先 API 
 2. **単一責任の原則** - 各クラスは1つの責務
 3. **オフラインファースト** - ネットワーク状態に関わらず基本機能を保証
 
+## 開発ツール
+
+| ツール                                              | バージョン | 用途                                          |
+| --------------------------------------------------- | ---------- | --------------------------------------------- |
+| [mise](https://mise.jdx.dev/)                       | --         | 開発ツールのバージョン管理                    |
+| [Bun](https://bun.sh/)                              | 1.3.9      | JavaScript ランタイム・パッケージマネージャー |
+| [actionlint](https://github.com/rhysd/actionlint)   | 1.7.11     | GitHub Actions ワークフローの静的解析         |
+| [pinact](https://github.com/suzuki-shunsuke/pinact) | 3.9.0      | GitHub Actions のコミット SHA ピン留め        |
+
+mise が Bun, actionlint, pinact のバージョンを管理する。mise を導入すれば、他のツールは `mise install` で自動インストールされる。
+
+## Git hooks
+
+[lefthook](https://lefthook.dev/) で以下の Git hooks を管理している。
+
+### pre-commit
+
+| コマンド   | 優先度 | 対象ファイル                        | 内容                    |
+| ---------- | ------ | ----------------------------------- | ----------------------- |
+| dprint     | 1      | `*.md`, `*.yaml`, `*.yml`, `*.json` | フォーマット自動修正    |
+| pinact     | 1      | `.github/workflows/*.yml`, `*.yaml` | Actions の SHA ピン留め |
+| actionlint | 2      | `.github/workflows/*.yml`, `*.yaml` | ワークフロー静的解析    |
+| doc-lint   | 3      | `*.md`                              | ドキュメント構造検証    |
+
+### commit-msg
+
+[commitlint](https://commitlint.js.org/) によるコミットメッセージの検証。Conventional Commits 形式を強制する。
+
+### post-merge / post-checkout
+
+`mise.toml` や `package.json` / `bun.lock` の変更を検知して、ツールや依存パッケージを自動インストールする。
+
+## コミット規約
+
+[Conventional Commits](https://www.conventionalcommits.org/) に準拠する。
+
+**形式:** `type(scope): 説明`
+
+### type 一覧
+
+`feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+
+### scope 一覧
+
+| scope     | 対象                      |
+| --------- | ------------------------- |
+| `app`     | app/ 配下のパッケージ     |
+| `core`    | core/ 配下のパッケージ    |
+| `feature` | feature/ 配下のパッケージ |
+
+scope は省略可能。複数スコープにまたがる変更の場合は省略する。
+
+## npm scripts
+
+| コマンド             | 説明                                                     |
+| -------------------- | -------------------------------------------------------- |
+| `bun run format`     | [dprint](https://dprint.dev/) によるフォーマットチェック |
+| `bun run format:fix` | dprint によるフォーマット自動修正                        |
+| `bun run lint:docs`  | ドキュメント構造リンター                                 |
+| `bun run prepare`    | lefthook の Git hooks をインストール                     |
+
+## CI / GitHub Actions
+
+Pull Request に対して以下のワークフローが実行される。
+
+| ワークフロー   | トリガー        | 内容                                                               |
+| -------------- | --------------- | ------------------------------------------------------------------ |
+| PR: Checks     | PR 作成・更新   | actionlint によるワークフロー検証、ドキュメント構造リンター        |
+| Weekly: Doc GC | 毎週月曜 / 手動 | 鮮度チェック + 品質スコア更新。陳腐化ドキュメントの Issue 自動作成 |
+
 ## ライセンス
 
 このプロジェクトは MIT License のもとで公開しています。詳細は [LICENSE](LICENSE) ファイルを参照してください。
