@@ -1,0 +1,134 @@
+# ドキュメントの鮮度チェックと品質スコア更新を週次で実行するワークフロー
+#
+# 対象: main ブランチ
+# 目的: 陳腐化ドキュメントの検出、品質スコアの自動更新
+---
+name: "Weekly: Doc Garbage Collection"
+
+on:
+  schedule:
+    - cron: "0 1 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  freshness-check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup mise
+        uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run freshness check
+        id: freshness
+        run: |
+          bun run scripts/freshness-check.ts --json > /tmp/stale.json
+          echo "count=$(jq length /tmp/stale.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Create issues for stale docs
+        if: steps.freshness.outputs.count != '0'
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            const fs = require('fs');
+            const stale = JSON.parse(fs.readFileSync('/tmp/stale.json', 'utf-8'));
+
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'stale-doc',
+              state: 'open',
+            });
+            const existingTitles = new Set(existing.data.map(i => i.title));
+
+            for (const doc of stale) {
+              const title = `[stale-doc] ${doc.file} が ${doc.daysSinceUpdate}日未更新`;
+              if (existingTitles.has(title)) continue;
+
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body: [
+                  `## 陳腐化ドキュメント`,
+                  '',
+                  `- **ファイル:** \`${doc.file}\``,
+                  `- **最終更新からの経過日数:** ${doc.daysSinceUpdate}日`,
+                  `- **閾値:** ${doc.threshold}日`,
+                  '',
+                  '### 対応方法',
+                  '',
+                  '1. ドキュメントの内容を確認し、最新の情報に更新する',
+                  '2. 内容が依然として有効な場合は、軽微な更新で鮮度をリセットする',
+                  '3. 内容が不要な場合は `status: outdated` に変更する',
+                ].join('\n'),
+                labels: ['stale-doc'],
+              });
+            }
+
+  quality-score:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Setup mise
+        uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Update quality score
+        run: bun run scripts/quality-score-update.ts
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet docs/quality-score.md 2>/dev/null; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create PR for quality score update
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="chore/update-quality-score-$(date +%Y%m%d)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add docs/quality-score.md
+          git commit -m "chore: 品質スコアを更新"
+          git push origin "$BRANCH"
+          gh pr create \
+            --title "chore: 品質スコアを更新" \
+            --body "週次の品質スコア自動更新" \
+            --base main
