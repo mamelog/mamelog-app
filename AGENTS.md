@@ -2,7 +2,7 @@
 
 AI agent directives for this repository. Project context, architecture, and package structure are in @README.md.
 
-## Quick Start Commands
+## Quick Reference
 
 ```bash
 # Initial setup
@@ -16,6 +16,12 @@ cd app/mobile && flutter run --no-pub --flavor dev
 
 # Quality checks
 melos run test --no-select && melos run analyze --no-select
+
+# Document formatting/linting
+bun run format        # Check formatting (dprint)
+bun run format:fix    # Auto-fix formatting (dprint)
+bun run lint:docs     # Check document structure
+bun run lint:docs:fix # Auto-fix document structure
 ```
 
 ### Key Melos Scripts
@@ -28,20 +34,29 @@ melos run test                   # All tests (dart + flutter)
 melos run format                 # Format all packages
 melos run fix                    # Apply dart fix to all packages
 melos run deps:validate          # Validate dependency correctness
-
-# Run specific package tests
-melos exec --scope=app_mobile -- flutter test
-flutter test test/path/to/file.dart  # Single file
 ```
 
-## Commit Conventions
+### Commit Conventions
 
 Format: `{type}({scope}): {Japanese description}`
 
+- Valid scopes: `app`, `core`, `feature` (defined in `commitlint.config.ts`)
 - Scope is optional; omit when changes span multiple scopes
 - Description and body in Japanese
 - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
 - [Forbidden] Guessing or inventing scopes
+- [MUST] Discover valid scopes from `commitlint.config.ts` before first commit
+
+## Directory Map
+
+| Directory     | Content                                  | Guide                  |
+| ------------- | ---------------------------------------- | ---------------------- |
+| `app/mobile/` | iOS/Android エントリーポイント (Flutter) | --                     |
+| `app/shared/` | アプリレイヤー共有ユーティリティ         | --                     |
+| `core/`       | コアパッケージ (抽象 + 実装)             | --                     |
+| `feature/`    | フィーチャーパッケージ                   | --                     |
+| `docs/`       | メタレイヤー: 品質基準、強制ルール       | [index](docs/index.md) |
+| `scripts/`    | 自動化スクリプト (Bun/TypeScript)        | --                     |
 
 ## Architecture Constraints
 
@@ -57,7 +72,7 @@ Format: `{type}({scope}): {Japanese description}`
 
 Capture flow uses sealed class pattern:
 
-```
+```text
 CaptureIdle -> CaptureReady -> ImageCaptured -> Extracting
 -> ExtractionComplete -> Saving -> SaveComplete
                       -> ExtractionFailed -> Extracting (retry)
@@ -74,19 +89,31 @@ CaptureIdle -> CaptureReady -> ImageCaptured -> Extracting
 
 Firebase ID token in Authorization header -> `verifyIdToken()` -> RLS.
 
-### Data Model
+### Key Constraints (from ADRs)
 
-13 tables with UUIDv7 primary keys. User data uses soft delete; LLM extraction results use hard delete. Key entities: users, roasters, beans, bean_origins, bean_flavor_notes, tasting_notes, brew_recipes, drink_logs, llm_extractions, countries, varieties, processing_methods, flavor_descriptors.
+ADRs live in [mamelog-docs](https://github.com/mamelog/mamelog-docs) `design/`.
 
-## Project Policies
+- Mobile framework: Flutter (iOS + Android) (ADR-0009)
+- Backend infra: Cloud Run (GCP) (ADR-0007)
+- Database: Neon PostgreSQL, ap-southeast-1 (ADR-0008)
+- Auth: Firebase Authentication (ADR-0011)
 
-### Documentation
+## Quality Standards
 
-- **Single Source of Truth**: Never duplicate content; link to the authoritative source
-- **Human docs -> AI docs**: [Forbidden]
-- **AI docs -> Human docs**: [Allowed]
-- **Version management**: Never hardcode tool versions; manage via dedicated config files
+See [docs/golden-principles.md](docs/golden-principles.md) for the quality principles all documents must satisfy.
 
-### Design Documents
+## Mechanical Enforcement
 
-Architecture decisions and design docs are in the separate `mamelog-docs` repository. Consult its `design/` directory for ADRs and `specs/` for specifications when verifying decisions.
+See [docs/enforcement.md](docs/enforcement.md) for the full list of automated checks.
+
+Summary:
+
+- **pre-commit:** dprint (formatting), pinact (SHA pinning), actionlint (workflow validation), doc-lint (document structure)
+- **commit-msg:** commitlint (Conventional Commits)
+- **post-merge / post-checkout:** auto `mise install` and `bun install` on config changes
+- **CI (PR):** actionlint, doc-lint
+- **CI (weekly):** freshness check, quality score update
+
+## Tool Versions
+
+All tool versions are managed by `mise.toml`. Do not hardcode versions elsewhere.
