@@ -1,0 +1,80 @@
+# https://lefthook.dev/configuration/
+min_version: 2.1.0
+assert_lefthook_installed: true
+
+output:
+  - summary
+  - failure
+  - execution
+  - skips
+
+pre-commit:
+  piped: true
+  skip:
+    - merge
+    - rebase
+  commands:
+    dprint:
+      priority: 1
+      glob: "*.{md,yaml,yml,json}"
+      run: node_modules/.bin/dprint fmt --allow-no-files {staged_files}
+      stage_fixed: true
+    pinact:
+      priority: 1
+      glob: ".github/workflows/*.{yml,yaml}"
+      run: pinact run {staged_files}
+      stage_fixed: true
+    actionlint:
+      priority: 2
+      glob: ".github/workflows/*.{yml,yaml}"
+      run: actionlint --color {staged_files}
+    doc-lint:
+      priority: 3
+      glob: "*.md"
+      run: bun run scripts/doc-lint.ts {staged_files}
+
+commit-msg:
+  skip:
+    - merge
+    - rebase
+  commands:
+    commitlint:
+      run: node_modules/.bin/commitlint --edit "$1"
+      fail_text: |
+        [NG] コミットメッセージが規約に違反しています
+
+        形式: type(scope): 説明
+        type: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
+        scope (任意): app, core, feature
+
+post-merge:
+  piped: true
+  commands:
+    mise-install:
+      glob: "mise.toml"
+      run: |
+        echo "[INFO] mise.toml が変更されました。ツールをインストールしています..."
+        mise install
+      priority: 1
+    bun-install:
+      glob: "{package.json,bun.lock}"
+      run: |
+        echo "[INFO] 依存関係が変更されました。bun install を実行しています..."
+        bun install
+      priority: 2
+
+post-checkout:
+  piped: true
+  commands:
+    mise-install:
+      glob: "mise.toml"
+      run: |
+        echo "[INFO] mise.toml が変更されました。ツールをインストールしています..."
+        mise install
+      priority: 1
+    bun-install:
+      glob: "{package.json,bun.lock}"
+      run: |
+        echo "[INFO] 依存関係が変更されました。bun install を実行しています..."
+        bun install
+      priority: 2

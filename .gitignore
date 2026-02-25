@@ -1,0 +1,40 @@
+# Flutter/Dart
+.dart_tool/
+.packages
+build/
+*.iml
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+
+# Android
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.*
+
+# IDE
+.idea/
+*.swp
+*.swo
+.vscode/
+
+# Melos
+.melos/
+
+# Node.js
+node_modules/
+
+# OS
+.DS_Store
+
+# Misc
+*.log
+coverage/
+.fvm/

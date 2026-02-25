@@ -1,0 +1,20 @@
+{
+  "name": "mamelog-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "format": "dprint check",
+    "format:fix": "dprint fmt",
+    "lint:docs": "bun run scripts/doc-lint.ts",
+    "lint:docs:fix": "bun run scripts/doc-lint.ts --fix",
+    "prepare": "lefthook install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "20.4.2",
+    "@commitlint/config-conventional": "20.4.2",
+    "@commitlint/types": "20.4.0",
+    "dprint": "0.51.1",
+    "lefthook": "2.1.1"
+  }
+}
