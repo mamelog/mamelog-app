@@ -8,6 +8,16 @@ AI agent directives for this repository. Project context, architecture, and pack
 # Initial setup
 mise trust && mise install && mise run bootstrap
 
+# Document formatting/linting (available now)
+bun run format        # Check formatting (dprint)
+bun run format:fix    # Auto-fix formatting (dprint)
+bun run lint:docs     # Check document structure
+bun run lint:docs:fix # Auto-fix document structure
+```
+
+Commands below require M1 infrastructure completion (pubspec.yaml with Melos config):
+
+```bash
 # Code generation (changed packages only)
 melos run codegen:diff:head
 
@@ -16,15 +26,11 @@ cd app/mobile && flutter run --no-pub --flavor dev
 
 # Quality checks
 melos run test --no-select && melos run analyze --no-select
-
-# Document formatting/linting
-bun run format        # Check formatting (dprint)
-bun run format:fix    # Auto-fix formatting (dprint)
-bun run lint:docs     # Check document structure
-bun run lint:docs:fix # Auto-fix document structure
 ```
 
 ### Key Melos Scripts
+
+Requires pubspec.yaml with Melos config (M1 infrastructure task). Melos config is embedded in the root pubspec.yaml under the `melos` key (melos.yaml is deprecated).
 
 ```bash
 melos run codegen                # Full code generation (all packages)
@@ -55,7 +61,7 @@ Format: `{type}({scope}): {Japanese description}`
 | `app/shared/` | アプリレイヤー共有ユーティリティ         | --                     |
 | `core/`       | コアパッケージ (抽象 + 実装)             | --                     |
 | `feature/`    | フィーチャーパッケージ                   | --                     |
-| `docs/`       | メタレイヤー: 品質基準、強制ルール       | [index](docs/index.md) |
+| `docs/`       | 設計・開発ガイド・品質基準・強制ルール   | [index](docs/index.md) |
 | `scripts/`    | 自動化スクリプト (Bun/TypeScript)        | --                     |
 
 ## Architecture Constraints
