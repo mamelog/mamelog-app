@@ -87,16 +87,14 @@ CaptureIdle -> CaptureReady -> ImageCaptured -> Extracting
 
 ### Auth
 
-Firebase ID token in Authorization header -> `verifyIdToken()` -> RLS.
+Firebase ID token in Authorization header -> server-side verification.
 
-### Key Constraints (from ADRs)
+### Key Constraints
 
-ADRs live in [mamelog-docs](https://github.com/mamelog/mamelog-docs) `design/`.
-
-- Mobile framework: Flutter (iOS + Android) (ADR-0009)
-- Backend infra: Cloud Run (GCP) (ADR-0007)
-- Database: Neon PostgreSQL, ap-southeast-1 (ADR-0008)
-- Auth: Firebase Authentication (ADR-0011)
+- Mobile framework: Flutter (iOS + Android)
+- Auth: Firebase Authentication
+- Local DB: Drift (SQLite)
+- API: REST
 
 ## Quality Standards
 

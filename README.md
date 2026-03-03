@@ -17,6 +17,8 @@
 - [クイックスタート](#クイックスタート)
 - [開発](#開発)
 - [アーキテクチャ](#アーキテクチャ)
+- [設計ドキュメント](#設計ドキュメント)
+- [MVP スコープ](#mvp-スコープ)
 - [ライセンス](#ライセンス)
 
 ## 概要
@@ -72,19 +74,32 @@ mamelog は「**撮るだけで記録完了**」をコア価値とするコー�
 
 - **Flutter / Dart** - バージョンは `mise.toml` で管理
 
-### 状態管理・DI
+### Flutter パッケージスタック
 
-- **GetIt + injectable** - 依存性注入 (DI)
-- **flutter_bloc** - Cubit パターンによる状態管理
-- **go_router** - StatefulShellRoute でタブナビゲーション管理
+確定済みパッケージ一覧。バージョンは調査時点 (2026-03-03) のもの。
 
-### ローカル DB
-
-- **Drift** - 型安全な SQLite ORM。FTS5 全文検索、リアクティブストリーム対応
-
-### 認証
-
-- **Firebase Authentication** - Google Sign-in + Sign in with Apple
+| カテゴリ               | パッケージ                              | バージョン    | 備考                                        |
+| ---------------------- | --------------------------------------- | ------------- | ------------------------------------------- |
+| **状態管理**           | `flutter_bloc`                          | 9.1.1         | Cubit 80% + Bloc 20% の使い分け             |
+|                        | `bloc`                                  | 9.2.0         | flutter_bloc の依存                         |
+| **DI**                 | `get_it`                                | 9.2.1         | O(1) サービスロケーター                     |
+|                        | `injectable` + `injectable_generator`   | 2.7.1+4       | アノテーションベース DI コード生成          |
+| **不変データモデル**   | `freezed` + `freezed_annotation`        | 3.2.5 / 3.1.0 | sealed class + copyWith + equality 自動生成 |
+| **JSON シリアライズ**  | `json_serializable` + `json_annotation` | 6.13.0        | API レスポンスモデルの JSON 変換            |
+| **等価比較**           | `equatable`                             | 2.0.8         | Freezed 不使用時のフォールバック            |
+| **ルーティング**       | `go_router`                             | 17.1.0        | StatefulShellRoute でタブナビゲーション     |
+| **ローカル DB**        | `drift`                                 | 2.31.0        | 型安全 SQLite ORM。FTS5 全文検索対応        |
+| **認証**               | `firebase_auth`                         | 6.1.4         | Google + Apple Sign-in                      |
+| **Google ログイン**    | `google_sign_in`                        | 7.2.0         | Google アカウント認証                       |
+| **Apple ログイン**     | `sign_in_with_apple`                    | 7.0.1         | Apple ID 認証                               |
+| **カメラ (MVP)**       | `image_picker`                          | 1.2.1         | システムカメラ UI                           |
+| **QR スキャン**        | `mobile_scanner`                        | 7.2.0         | v7.2.0 で日本語 UTF-8 修正済み              |
+| **画像圧縮**           | `flutter_image_compress`                | 2.4.0         | WebP 圧縮                                   |
+| **画像キャッシュ**     | `cached_network_image`                  | 3.4.1         | ネットワーク画像キャッシュ                  |
+| **権限管理**           | `permission_handler`                    | 12.0.1        | カメラ等のランタイム権限                    |
+| **接続状態**           | `connectivity_plus`                     | 7.0.0         | オフライン検知                              |
+| **コード生成**         | `build_runner`                          | 最新安定版    | Freezed + injectable + json_serializable    |
+| **エラーハンドリング** | 自前 Result sealed class                | --            | Flutter 公式パターン準拠                    |
 
 ### 開発ツール
 
@@ -231,9 +246,8 @@ flowchart TD
 ### システム構成
 
 ```
-Flutter App -> REST API -> PostgreSQL
+Flutter App -> REST API -> サーバー
            -> Firebase Auth (トークン検証)
-           -> Cloud Storage (画像)
            -> LLM (コーヒー情報抽出)
 ```
 
@@ -251,6 +265,60 @@ Flutter 公式のオフラインファーストパターンに準拠する。
 ### 環境分離
 
 Flavor (`dev` / `stg` / `prod`) で Firebase プロジェクトや接続先 API を切り替える。
+
+| Flavor | 用途                   | Firebase プロジェクト | API 接続先        |
+| ------ | ---------------------- | --------------------- | ----------------- |
+| `dev`  | ローカル開発・デバッグ | 開発用                | 開発 API サーバー |
+| `stg`  | ステージング検証       | ステージング用        | STG API サーバー  |
+| `prod` | 本番リリース           | 本番用                | 本番 API サーバー |
+
+```bash
+# Flavor を指定してアプリを実行
+cd app/mobile && flutter run --no-pub --flavor dev
+cd app/mobile && flutter run --no-pub --flavor stg
+cd app/mobile && flutter run --no-pub --flavor prod
+```
+
+### 認証フロー
+
+Firebase Authentication による認証。アプリは Firebase ID トークンを REST API に送信し、サーバー側でユーザーごとのデータ分離を行う。
+
+```
+Flutter App
+  |-- firebase_auth で認証 (Google / Apple / 匿名)
+  |-- Firebase ID トークンを Authorization ヘッダーに付与
+  v
+REST API サーバー
+  |-- トークン検証 -> ユーザー識別
+  |-- ユーザーごとのデータ分離
+```
+
+### データモデル概要
+
+ローカル DB に12エンティティを保持。詳細は [データモデル仕様](docs/data-model.md) を参照。
+
+| 区分           | エンティティ                                                 |
+| -------------- | ------------------------------------------------------------ |
+| ユーザーデータ | users, roasters, beans, bean_origins, bean_flavor_notes      |
+| 記録・評価     | tasting_notes, brew_recipes, drink_logs                      |
+| マスターデータ | countries, varieties, processing_methods, flavor_descriptors |
+
+主キーは全テーブル UUIDv7。ユーザーデータは soft delete (`deleted_at`)。
+
+### 設計決定サマリー
+
+モバイルアプリに関する主要な設計判断の一覧。
+
+| カテゴリ               | 決定事項                  |
+| ---------------------- | ------------------------- |
+| モバイルフレームワーク | Flutter                   |
+| 状態管理               | BLoC (Cubit + Bloc)       |
+| DI                     | Injectable + get_it       |
+| 不変データモデル       | Freezed 3.x               |
+| ルーティング           | go_router                 |
+| ローカル DB            | Drift (SQLite)            |
+| 認証方式               | Firebase Authentication   |
+| API 通信               | REST (URL バージョニング) |
 
 ### 設計原則
 
@@ -327,6 +395,36 @@ Pull Request に対して以下のワークフローが実行される。
 | -------------- | --------------- | ------------------------------------------------------------------ |
 | PR: Checks     | PR 作成・更新   | actionlint によるワークフロー検証、ドキュメント構造リンター        |
 | Weekly: Doc GC | 毎週月曜 / 手動 | 鮮度チェック + 品質スコア更新。陳腐化ドキュメントの Issue 自動作成 |
+
+## 設計ドキュメント
+
+本リポジトリ内の設計ドキュメント。
+
+| ドキュメント                               | 内容                                                        |
+| ------------------------------------------ | ----------------------------------------------------------- |
+| [アーキテクチャ設計](docs/architecture.md) | レイヤー構成、状態管理、DI、データフロー、ナビゲーション    |
+| [データモデル仕様](docs/data-model.md)     | 全12エンティティ定義、ER 図、Drift テーブル、Freezed モデル |
+| [開発ガイド](docs/development-guide.md)    | 環境構築、Flavor 設定、コード生成、テスト、コミット規約     |
+| [黄金原則](docs/golden-principles.md)      | ドキュメント品質基準                                        |
+| [機械的強制ルール](docs/enforcement.md)    | リンター・CI で自動検証されるルール                         |
+
+## MVP スコープ
+
+コア価値「**撮るだけで記録完了**」を実現する最小限の機能セット。P0 (MVP 必須) として以下の11機能を定義している。
+
+| ID    | 機能                      | 概要                                                |
+| ----- | ------------------------- | --------------------------------------------------- |
+| F-001 | ユーザー認証              | Google Sign-in + Sign in with Apple (Firebase Auth) |
+| F-002 | 写真撮影による自動抽出    | カメラ撮影 -> LLM が12以上のフィールドを自動抽出    |
+| F-003 | QR コードスキャン         | QR -> URL -> Web ページから LLM 抽出                |
+| F-004 | URL 直接入力              | 商品ページ URL から LLM 抽出                        |
+| F-005 | カード型プレビュー + 編集 | 信頼度バッジ付き抽出結果の確認・タップ編集          |
+| F-006 | 手動入力フォールバック    | 全フィールドの手動入力                              |
+| F-007 | エントリ保存              | コーヒー情報 + 写真をクラウド保存                   |
+| F-008 | コーヒーライブラリ        | 一覧表示 + 詳細表示                                 |
+| F-009 | 簡易テイスティングノート  | 星評価 (1-5) + 自由メモ                             |
+| F-010 | オフライン撮影 + 自動抽出 | オフラインで撮影、オンライン復帰後に自動 LLM 抽出   |
+| F-011 | アカウント削除            | Apple App Store 要件準拠の全データ削除              |
 
 ## ライセンス
 
