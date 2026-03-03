@@ -208,7 +208,6 @@ class Beans extends Table {
   IntColumn get weightG => integer().nullable()();
   BoolColumn get isDecaf => boolean().withDefault(const Constant(false))();
   TextColumn get description => text().nullable()();
-  TextColumn get photoUrl => text().nullable()();
   TextColumn get sourceUrl => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
@@ -458,7 +457,6 @@ class BeanResponse with _$BeanResponse {
     @JsonKey(name: 'weight_g') int? weightG,
     @JsonKey(name: 'is_decaf') @Default(false) bool isDecaf,
     String? description,
-    @JsonKey(name: 'photo_url') String? photoUrl,
     @Default([]) List<BeanOriginResponse> origins,
     @JsonKey(name: 'flavor_notes')
     @Default([])

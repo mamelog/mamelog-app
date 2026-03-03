@@ -8,6 +8,8 @@ status: draft
 
 mamelog-app の開発に必要な環境構築から日常の開発ワークフローまでをカバーする How-To ガイド。
 
+> **注意:** Flutter/Melos 関連のコマンド（コード生成、テスト、アプリ実行等）は M1 基盤構築（pubspec.yaml 作成）の完了後に使用可能となる。Melos 設定はルートの pubspec.yaml の `melos` キーに埋め込む（melos.yaml は非推奨）。現在使用可能なコマンドはドキュメントフォーマット・リンター関連のみ。
+
 ## 環境構築
 
 ### 前提条件
@@ -602,5 +604,8 @@ melos bootstrap
 
 ## 関連ドキュメント
 
+- [アーキテクチャ設計](architecture.md) -- レイヤー構成、状態管理、DI、データフロー
+- [データモデル仕様](data-model.md) -- Drift テーブル定義、Freezed モデル、ER 図
+- [実装ステータス](implementation-status.md) -- パッケージ、機能、マイルストーンの実装進捗
 - [黄金原則](golden-principles.md) -- ドキュメント品質基準
 - [機械的強制ルール](enforcement.md) -- リンター・CI の自動検証ルール

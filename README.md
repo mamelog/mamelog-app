@@ -6,7 +6,9 @@
 
 # mamelog (豆ろぐ)
 
-コーヒー体験を写真から自動で記録・蓄積するパーソナルコーヒーライブラリアプリ。写真・QR コード・URL から LLM が情報を自動抽出し、手入力なしで構造化データとして保存する。
+コーヒー体験を写真から自動で記録・蓄積するパーソナルコーヒーライブラリアプリ。写真・QR コード・URL から LLM (Large Language Model) が情報を自動抽出し、手入力なしで構造化データとして保存する。
+
+> **現在のステータス:** M1 基盤構築フェーズ。ディレクトリ構成とツールチェーンを整備中。Dart ソースコードは未実装。
 
 ## 目次
 
@@ -17,6 +19,11 @@
 - [クイックスタート](#クイックスタート)
 - [開発](#開発)
 - [アーキテクチャ](#アーキテクチャ)
+- [開発ツール](#開発ツール)
+- [Git フック](#git-フック)
+- [コミット規約](#コミット規約)
+- [npm スクリプト](#npm-スクリプト)
+- [CI / GitHub Actions](#ci--github-actions)
 - [設計ドキュメント](#設計ドキュメント)
 - [MVP スコープ](#mvp-スコープ)
 - [ライセンス](#ライセンス)
@@ -59,47 +66,49 @@ mamelog は「**撮るだけで記録完了**」をコア価値とするコー�
 
 ### テイスティングノート
 
-- **SCA カッピングプロトコル準拠** - classic / CVA 2024 の両プロトコル対応
+- **SCA (Specialty Coffee Association) カッピングプロトコル準拠** - classic / CVA 2024 の両プロトコル対応
 - **レーダーチャート** - テイスティングスコアの視覚化
 - **自由記述** - 感想やメモの記録
 
 ### オフライン対応
 
-- **オフライン写真撮影** - ネットワークなしでも撮影・保存可能
+- **オフライン写真撮影** - ネットワークなしでも撮影可能。オンライン復帰後に LLM 抽出を実行
 - **自動同期** - オンライン復帰後に自動で LLM 抽出を実行
 
 ## 技術スタック
 
 ### フレームワーク・言語
 
-- **Flutter / Dart** - バージョンは `mise.toml` で管理
+- **Flutter / Dart** - バージョンは `mise.toml` で管理予定（M1 フェーズで設定）
 
 ### Flutter パッケージスタック
 
-確定済みパッケージ一覧。バージョンは調査時点 (2026-03-03) のもの。
+確定済みパッケージ一覧。バージョンは調査時点 (2026-03-03) のもので、各パッケージの `pubspec.yaml` 作成時に確定する。
 
-| カテゴリ               | パッケージ                              | バージョン    | 備考                                        |
-| ---------------------- | --------------------------------------- | ------------- | ------------------------------------------- |
-| **状態管理**           | `flutter_bloc`                          | 9.1.1         | Cubit 80% + Bloc 20% の使い分け             |
-|                        | `bloc`                                  | 9.2.0         | flutter_bloc の依存                         |
-| **DI**                 | `get_it`                                | 9.2.1         | O(1) サービスロケーター                     |
-|                        | `injectable` + `injectable_generator`   | 2.7.1+4       | アノテーションベース DI コード生成          |
-| **不変データモデル**   | `freezed` + `freezed_annotation`        | 3.2.5 / 3.1.0 | sealed class + copyWith + equality 自動生成 |
-| **JSON シリアライズ**  | `json_serializable` + `json_annotation` | 6.13.0        | API レスポンスモデルの JSON 変換            |
-| **等価比較**           | `equatable`                             | 2.0.8         | Freezed 不使用時のフォールバック            |
-| **ルーティング**       | `go_router`                             | 17.1.0        | StatefulShellRoute でタブナビゲーション     |
-| **ローカル DB**        | `drift`                                 | 2.31.0        | 型安全 SQLite ORM。FTS5 全文検索対応        |
-| **認証**               | `firebase_auth`                         | 6.1.4         | Google + Apple Sign-in                      |
-| **Google ログイン**    | `google_sign_in`                        | 7.2.0         | Google アカウント認証                       |
-| **Apple ログイン**     | `sign_in_with_apple`                    | 7.0.1         | Apple ID 認証                               |
-| **カメラ (MVP)**       | `image_picker`                          | 1.2.1         | システムカメラ UI                           |
-| **QR スキャン**        | `mobile_scanner`                        | 7.2.0         | v7.2.0 で日本語 UTF-8 修正済み              |
-| **画像圧縮**           | `flutter_image_compress`                | 2.4.0         | WebP 圧縮                                   |
-| **画像キャッシュ**     | `cached_network_image`                  | 3.4.1         | ネットワーク画像キャッシュ                  |
-| **権限管理**           | `permission_handler`                    | 12.0.1        | カメラ等のランタイム権限                    |
-| **接続状態**           | `connectivity_plus`                     | 7.0.0         | オフライン検知                              |
-| **コード生成**         | `build_runner`                          | 最新安定版    | Freezed + injectable + json_serializable    |
-| **エラーハンドリング** | 自前 Result sealed class                | --            | Flutter 公式パターン準拠                    |
+| カテゴリ                      | パッケージ                              | バージョン    | 備考                                                      |
+| ----------------------------- | --------------------------------------- | ------------- | --------------------------------------------------------- |
+| **状態管理**                  | `flutter_bloc`                          | 9.1.1         | Cubit 80% + Bloc 20% の使い分け                           |
+|                               | `bloc`                                  | 9.2.0         | flutter_bloc の依存                                       |
+| **DI (Dependency Injection)** | `get_it`                                | 9.2.1         | O(1) サービスロケーター                                   |
+|                               | `injectable` + `injectable_generator`   | 2.7.1+4       | アノテーションベース DI コード生成                        |
+| **不変データモデル**          | `freezed` + `freezed_annotation`        | 3.2.5 / 3.1.0 | sealed class + copyWith + equality 自動生成               |
+| **JSON シリアライズ**         | `json_serializable` + `json_annotation` | 6.13.0        | API レスポンスモデルの JSON 変換                          |
+| **等価比較**                  | `equatable`                             | 2.0.8         | Freezed 不使用時のフォールバック                          |
+| **ルーティング**              | `go_router`                             | 17.1.0        | StatefulShellRoute でタブナビゲーション                   |
+| **ローカル DB**               | `drift`                                 | 2.31.0        | 型安全 SQLite ORM。FTS5 (Full-Text Search 5) 全文検索対応 |
+| **認証**                      | `firebase_auth`                         | 6.1.4         | Google + Apple Sign-in                                    |
+| **Google ログイン**           | `google_sign_in`                        | 7.2.0         | Google アカウント認証                                     |
+| **Apple ログイン**            | `sign_in_with_apple`                    | 7.0.1         | Apple ID 認証                                             |
+| **カメラ (MVP)**              | `image_picker`                          | 1.2.1         | システムカメラ UI                                         |
+| **QR スキャン**               | `mobile_scanner`                        | 7.2.0         | v7.2.0 で日本語 UTF-8 修正済み                            |
+| **画像圧縮**                  | `flutter_image_compress`                | 2.4.0         | WebP 圧縮                                                 |
+| **画像キャッシュ**            | `cached_network_image`                  | 3.4.1         | ネットワーク画像キャッシュ                                |
+| **権限管理**                  | `permission_handler`                    | 12.0.1        | カメラ等のランタイム権限                                  |
+| **接続状態**                  | `connectivity_plus`                     | 7.0.0         | オフライン検知                                            |
+| **コード生成**                | `build_runner`                          | ※1            | Freezed + injectable + json_serializable                  |
+| **エラーハンドリング**        | 自前 Result sealed class                | --            | Flutter 公式パターン準拠                                  |
+
+※1: `build_runner` のバージョンは Flutter SDK との互換性に依存するため、セットアップ時に決定する。
 
 ### 開発ツール
 
@@ -137,7 +146,7 @@ mamelog-app/
 │   ├── library/                        # コーヒーライブラリ (一覧/詳細/編集)
 │   ├── tasting/                        # テイスティングノート
 │   └── stats/                          # 統計ダッシュボード
-└── pubspec.yaml                        # ワークスペースルート (Melos)
+└── pubspec.yaml                        # ワークスペースルート (Melos) ※未作成
 ```
 
 ### レイヤー依存ルール
@@ -183,6 +192,8 @@ mise trust && mise install && mise run bootstrap
 
 ### アプリの実行
 
+M1 基盤構築の完了後に使用可能。
+
 ```bash
 # 開発環境
 cd app/mobile && flutter run --no-pub --flavor dev
@@ -197,6 +208,8 @@ cd app/mobile && flutter run --no-pub --flavor prod
 ## 開発
 
 ### よく使うコマンド
+
+以下の Melos コマンドは M1 基盤構築（pubspec.yaml 作成）の完了後に使用可能。Melos 設定はルートの pubspec.yaml の `melos` キーに埋め込む（melos.yaml は非推奨）。
 
 ```bash
 # コード生成（変更パッケージのみ、推奨）
@@ -272,12 +285,7 @@ Flavor (`dev` / `stg` / `prod`) で Firebase プロジェクトや接続先 API 
 | `stg`  | ステージング検証       | ステージング用        | STG API サーバー  |
 | `prod` | 本番リリース           | 本番用                | 本番 API サーバー |
 
-```bash
-# Flavor を指定してアプリを実行
-cd app/mobile && flutter run --no-pub --flavor dev
-cd app/mobile && flutter run --no-pub --flavor stg
-cd app/mobile && flutter run --no-pub --flavor prod
-```
+実行コマンドは [アプリの実行](#アプリの実行) を参照。
 
 ### 認証フロー
 
@@ -303,7 +311,7 @@ REST API サーバー
 | 記録・評価     | tasting_notes, brew_recipes, drink_logs                      |
 | マスターデータ | countries, varieties, processing_methods, flavor_descriptors |
 
-主キーは全テーブル UUIDv7。ユーザーデータは soft delete (`deleted_at`)。
+主キーは全テーブル UUIDv7 (時刻順ソート可能な UUID)。ユーザーデータは soft delete (`deleted_at`)。
 
 ### 設計決定サマリー
 
@@ -328,18 +336,18 @@ REST API サーバー
 
 ## 開発ツール
 
-| ツール                                              | バージョン | 用途                                          |
-| --------------------------------------------------- | ---------- | --------------------------------------------- |
-| [mise](https://mise.jdx.dev/)                       | --         | 開発ツールのバージョン管理                    |
-| [Bun](https://bun.sh/)                              | 1.3.9      | JavaScript ランタイム・パッケージマネージャー |
-| [actionlint](https://github.com/rhysd/actionlint)   | 1.7.11     | GitHub Actions ワークフローの静的解析         |
-| [pinact](https://github.com/suzuki-shunsuke/pinact) | 3.9.0      | GitHub Actions のコミット SHA ピン留め        |
+| ツール                                              | 用途                                          |
+| --------------------------------------------------- | --------------------------------------------- |
+| [mise](https://mise.jdx.dev/)                       | 開発ツールのバージョン管理                    |
+| [Bun](https://bun.sh/)                              | JavaScript ランタイム・パッケージマネージャー |
+| [actionlint](https://github.com/rhysd/actionlint)   | GitHub Actions ワークフローの静的解析         |
+| [pinact](https://github.com/suzuki-shunsuke/pinact) | GitHub Actions のコミット SHA ピン留め        |
 
-mise が Bun, actionlint, pinact のバージョンを管理する。mise を導入すれば、他のツールは `mise install` で自動インストールされる。
+各ツールのバージョンは `mise.toml` で管理する。mise を導入すれば `mise install` で自動インストールされる。npm パッケージのバージョンは `package.json` を参照。
 
-## Git hooks
+## Git フック
 
-[lefthook](https://lefthook.dev/) で以下の Git hooks を管理している。
+[lefthook](https://lefthook.dev/) で以下の Git フックを管理している。
 
 ### pre-commit
 
@@ -378,7 +386,7 @@ mise が Bun, actionlint, pinact のバージョンを管理する。mise を導
 
 scope は省略可能。複数スコープにまたがる変更の場合は省略する。
 
-## npm scripts
+## npm スクリプト
 
 | コマンド             | 説明                                                     |
 | -------------------- | -------------------------------------------------------- |
@@ -400,13 +408,14 @@ Pull Request に対して以下のワークフローが実行される。
 
 本リポジトリ内の設計ドキュメント。
 
-| ドキュメント                               | 内容                                                        |
-| ------------------------------------------ | ----------------------------------------------------------- |
-| [アーキテクチャ設計](docs/architecture.md) | レイヤー構成、状態管理、DI、データフロー、ナビゲーション    |
-| [データモデル仕様](docs/data-model.md)     | 全12エンティティ定義、ER 図、Drift テーブル、Freezed モデル |
-| [開発ガイド](docs/development-guide.md)    | 環境構築、Flavor 設定、コード生成、テスト、コミット規約     |
-| [黄金原則](docs/golden-principles.md)      | ドキュメント品質基準                                        |
-| [機械的強制ルール](docs/enforcement.md)    | リンター・CI で自動検証されるルール                         |
+| ドキュメント                                    | 内容                                                        |
+| ----------------------------------------------- | ----------------------------------------------------------- |
+| [アーキテクチャ設計](docs/architecture.md)      | レイヤー構成、状態管理、DI、データフロー、ナビゲーション    |
+| [データモデル仕様](docs/data-model.md)          | 全12エンティティ定義、ER 図、Drift テーブル、Freezed モデル |
+| [開発ガイド](docs/development-guide.md)         | 環境構築、Flavor 設定、コード生成、テスト、コミット規約     |
+| [黄金原則](docs/golden-principles.md)           | ドキュメント品質基準                                        |
+| [機械的強制ルール](docs/enforcement.md)         | リンター・CI で自動検証されるルール                         |
+| [実装ステータス](docs/implementation-status.md) | パッケージ、機能、マイルストーンの実装進捗                  |
 
 ## MVP スコープ
 
@@ -420,7 +429,7 @@ Pull Request に対して以下のワークフローが実行される。
 | F-004 | URL 直接入力              | 商品ページ URL から LLM 抽出                        |
 | F-005 | カード型プレビュー + 編集 | 信頼度バッジ付き抽出結果の確認・タップ編集          |
 | F-006 | 手動入力フォールバック    | 全フィールドの手動入力                              |
-| F-007 | エントリ保存              | コーヒー情報 + 写真をクラウド保存                   |
+| F-007 | エントリ保存              | コーヒー情報をクラウド保存                          |
 | F-008 | コーヒーライブラリ        | 一覧表示 + 詳細表示                                 |
 | F-009 | 簡易テイスティングノート  | 星評価 (1-5) + 自由メモ                             |
 | F-010 | オフライン撮影 + 自動抽出 | オフラインで撮影、オンライン復帰後に自動 LLM 抽出   |

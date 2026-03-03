@@ -6,7 +6,7 @@ status: approved
 
 # mamelog-app 知識ベース
 
-mamelog-app リポジトリのメタレイヤー。ドキュメントの品質基準と強制ルールを管理する。
+mamelog-app リポジトリの設計・開発・品質管理ドキュメントの目次。
 
 ## 目次
 
@@ -23,6 +23,10 @@ mamelog-app リポジトリのメタレイヤー。ドキュメントの品質�
 ### 開発
 
 - [開発ガイド](development-guide.md) -- 環境構築から日常の開発ワークフローまで
+
+### 進捗
+
+- [実装ステータス](implementation-status.md) -- パッケージ、機能、マイルストーンの実装進捗
 
 ### 運用
 
