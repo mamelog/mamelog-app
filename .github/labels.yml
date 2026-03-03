@@ -1,0 +1,125 @@
+# Priority labels
+- name: "priority:critical"
+  color: "b60205"
+  description: "Urgent issue requiring immediate attention"
+
+- name: "priority:high"
+  color: "d93f0b"
+  description: "High priority issue"
+
+- name: "priority:medium"
+  color: "fbca04"
+  description: "Medium priority issue"
+
+- name: "priority:low"
+  color: "0e8a16"
+  description: "Low priority issue"
+
+# Special labels
+- name: "breaking-change"
+  color: "b60205"
+  description: "Introduces breaking changes"
+
+# Size labels
+- name: "size:XS"
+  color: "009800"
+  description: "Very small change (<10 lines)"
+
+- name: "size:S"
+  color: "77bb00"
+  description: "Small change (10-50 lines)"
+
+- name: "size:M"
+  color: "ffcc00"
+  description: "Medium change (50-200 lines)"
+
+- name: "size:L"
+  color: "ff9900"
+  description: "Large change (200-500 lines)"
+
+- name: "size:XL"
+  color: "ff0000"
+  description: "Very large change (>500 lines)"
+
+# Default labels
+- name: "bug"
+  color: "d73a4a"
+  description: "Something isn't working"
+
+- name: "dependencies"
+  color: "1d76db"
+  description: "Pull requests that update a dependency file"
+
+- name: "do-not-merge"
+  color: "b60205"
+  description: "This PR should not be merged yet"
+
+- name: "duplicate"
+  color: "cfd8d7"
+  description: "This issue or pull request already exists"
+
+- name: "enhancement"
+  color: "a2eeef"
+  description: "New feature or request"
+
+- name: "good-first-issue"
+  color: "fe9b9c"
+  description: "Good for newcomers"
+
+- name: "help-wanted"
+  color: "008672"
+  description: "Extra attention is needed"
+
+- name: "ignore-for-release"
+  color: "bfd4f2"
+  description: "Exclude from Release Notes"
+
+- name: "wontfix"
+  color: "ffffff"
+  description: "This will not be worked on"
+
+- name: "work-in-progress"
+  color: "e5d19e"
+  description: "Work is still in progress"
+
+# Type labels
+- name: "type:feature"
+  color: "ededed"
+  description: "A new feature"
+
+- name: "type:fix"
+  color: "ededed"
+  description: "A bug fix"
+
+- name: "type:docs"
+  color: "ededed"
+  description: "Documentation only changes"
+
+- name: "type:style"
+  color: "ededed"
+  description: "Changes that do not affect the meaning of the code"
+
+- name: "type:refactor"
+  color: "ededed"
+  description: "A code change that neither fixes a bug nor adds a feature"
+
+- name: "type:ci"
+  color: "ededed"
+  description: "Changes to our CI configuration files and scripts"
+
+- name: "type:chore"
+  color: "ededed"
+  description: "Other changes that don't modify src or test files"
+
+# Garbage Collection labels
+- name: "stale-doc"
+  color: "fbca04"
+  description: "Document has not been updated past its freshness threshold"
+
+- name: "broken-link"
+  color: "d93f0b"
+  description: "Document contains broken internal links"
+
+- name: "doc-quality"
+  color: "0e8a16"
+  description: "Document quality issue (missing frontmatter, etc.)"
