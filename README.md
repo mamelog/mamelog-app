@@ -233,12 +233,18 @@ melos run deps:validate
 
 ### 開発フロー
 
-1. **Issue 作成** - 作業内容を明確化
-2. **ブランチ作成** - `feature/GH-{issue 番号}`
-3. **実装** - TDD（Red -> Green -> Refactor）
-4. **テスト** - Unit / Widget / Integration テスト
-5. **PR 作成** - レビュー依頼
-6. **マージ** - マージコミットで統合
+このリポジトリは **Trunk-Based Development** を採用している。`main` ブランチを常にリリース可能な状態に保ち、短命のフィーチャーブランチで開発を行う。
+
+```
+feature branch --> PR --> main (trunk)
+```
+
+1. **Issue 作成** -- 作業内容を明確化
+2. **ブランチ作成** -- `feature/GH-{issue 番号}` を `main` から作成
+3. **実装** -- TDD (Red -> Green -> Refactor)
+4. **テスト** -- Unit / Widget / Integration テスト
+5. **PR 作成** -- レビュー依頼
+6. **マージ** -- main にマージ後、フィーチャーブランチを削除
 
 ## アーキテクチャ
 
