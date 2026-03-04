@@ -102,6 +102,24 @@ Firebase ID token in Authorization header -> server-side verification.
 - Local DB: Drift (SQLite)
 - API: REST
 
+### Branching Strategy
+
+This repository follows **Trunk-Based Development**.
+
+**Promotion flow:**
+
+```
+feature branch --> PR --> main (trunk)
+```
+
+**Branch lifecycle:**
+
+- [MUST] Keep feature branches short-lived (merge within days, not weeks)
+- [MUST] Branch from `main` and merge back to `main` via PR
+- [MUST] Delete feature branches after merge
+- [Forbidden] Long-lived development branches (e.g., `develop`, `release/*`)
+- [Forbidden] Direct push to `main` -- all changes go through PR
+
 ## Quality Standards
 
 See [docs/golden-principles.md](docs/golden-principles.md) for the quality principles all documents must satisfy.
