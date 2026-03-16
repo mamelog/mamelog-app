@@ -25,7 +25,19 @@ runs:
           ~/.pub-cache/git
         key: pub-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/pubspec.lock') }}
 
+    # グローバルパッケージ (melos, bloc_tools) のキャッシュ
+    # バージョンが変わらない限り再インストールをスキップ (推定 10-20s 短縮)
+    - name: Cache global packages
+      uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+      with:
+        path: |
+          ~/.pub-cache/bin
+          ~/.pub-cache/global_packages
+        key: pub-global-${{ runner.os }}-${{ runner.arch }}-melos-${{ hashFiles('pubspec.lock') }}-bloc-tools-0.1.0-dev.20
+
+    # macOS のみ: Swift Package Manager を有効化 (Linux CI では不要)
     - name: Enable Swift Package Manager
+      if: runner.os == 'macOS'
       shell: bash
       run: flutter config --enable-swift-package-manager
 
