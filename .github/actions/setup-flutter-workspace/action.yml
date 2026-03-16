@@ -1,0 +1,41 @@
+# Flutter ワークスペースをセットアップする Composite Action
+#
+# 前提: mise-action による Flutter インストールは呼び出し元で実施済み
+# 目的: pub キャッシュ、melos セットアップを一括で行う
+---
+name: Setup Flutter Workspace
+description: Cache pub packages and bootstrap melos (requires Flutter to be already installed via mise)
+
+runs:
+  using: composite
+  steps:
+    - name: Export PUB_CACHE
+      shell: bash
+      run: |
+        echo "PUB_CACHE=$HOME/.pub-cache" >> "$GITHUB_ENV"
+        echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
+
+    # restore-keys を使用しない: 古いキャッシュ復元による依存関係の不整合を防止
+    # --enforce-lockfile との一貫性を保つため、常に現在の lockfile と完全一致するキャッシュのみ使用
+    - name: Cache pub packages
+      uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+      with:
+        path: |
+          ~/.pub-cache/hosted
+          ~/.pub-cache/git
+        key: pub-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/pubspec.lock') }}
+
+    - name: Enable Swift Package Manager
+      shell: bash
+      run: flutter config --enable-swift-package-manager
+
+    - name: Setup melos
+      shell: bash
+      run: |
+        MELOS_VERSION=$(cat pubspec.lock | yq ".packages.melos.version" -r)
+        flutter pub global activate melos "$MELOS_VERSION"
+        melos bootstrap --enforce-lockfile
+
+    - name: Activate bloc_tools
+      shell: bash
+      run: dart pub global activate bloc_tools 0.1.0-dev.20

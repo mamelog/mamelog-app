@@ -1,0 +1,80 @@
+name: Test
+description: テストの追加・改善・カバレッジ向上
+title: "test: "
+labels: ["type:test"]
+body:
+  - type: checkboxes
+    attributes:
+      label: 重複確認
+      description: 同様の Issue が存在しないことを確認してください。
+      options:
+        - label: 同様の Issue が存在しないことを確認しました
+          required: true
+
+  - type: textarea
+    id: overview
+    attributes:
+      label: 概要
+      description: テスト追加・改善の概要を記述してください。
+      placeholder: |
+        何のテストを追加・改善したいか、その背景・目的を簡潔に記述してください。
+    validations:
+      required: true
+
+  - type: textarea
+    id: target-files
+    attributes:
+      label: 対象ファイル / パッケージ
+      description: テスト対象のファイルやパッケージを記述してください。
+      placeholder: |
+        例: feature/capture/lib/src/cubit/capture_cubit.dart
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-state
+    attributes:
+      label: 現在のコード / テスト状況
+      description: 現在のテスト状況やカバレッジを記述してください。
+      placeholder: |
+        現在のテスト状況、カバレッジ、テストされていない部分等を記述してください。
+
+  - type: textarea
+    id: recommended-approach
+    attributes:
+      label: 推奨されるテスト方法
+      description: テスト方法の案があれば記述してください。
+      placeholder: |
+        例: blocTest<>() を使用した Cubit テスト、Widget テスト、mockito によるモック等
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: 受け入れ条件
+      description: この Issue が完了したと判断するための条件をチェックリスト形式で記述してください。
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+        - [ ] melos run test --no-select がパス
+    validations:
+      required: true
+
+  - type: textarea
+    id: test-strategy
+    attributes:
+      label: テスト方針
+      description: テストの種類、テストケースの方針を記述してください。
+      placeholder: |
+        テスト命名規則: 正常系:, 異常系:, 境界値: プレフィックス
+        テストの種類: Unit, Widget, Integration 等
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: 参考
+      description: 参考となるテストコード、ドキュメント等があればリンクを記述してください。
+      placeholder: |
+        - 既存テスト: path/to/test.dart
+        - テストパターン: path/to/similar_test.dart

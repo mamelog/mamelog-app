@@ -11,9 +11,21 @@ on:
       ci:
         description: "CI 関連ファイルに変更がある場合 true"
         value: ${{ jobs.detect-changes.outputs.ci }}
-      docs-structure:
-        description: "ドキュメント構造関連ファイルに変更がある場合 true"
-        value: ${{ jobs.detect-changes.outputs.docs-structure }}
+      format:
+        description: "フォーマット対象ファイルに変更がある場合 true"
+        value: ${{ jobs.detect-changes.outputs.format }}
+      analyze:
+        description: "静的解析対象ファイルに変更がある場合 true"
+        value: ${{ jobs.detect-changes.outputs.analyze }}
+      test:
+        description: "テスト対象ファイルに変更がある場合 true"
+        value: ${{ jobs.detect-changes.outputs.test }}
+      docs:
+        description: "ドキュメントに変更がある場合 true"
+        value: ${{ jobs.detect-changes.outputs.docs }}
+      src:
+        description: "ソースコードに変更がある場合 true"
+        value: ${{ jobs.detect-changes.outputs.src }}
 
 defaults:
   run:
@@ -28,7 +40,11 @@ jobs:
       pull-requests: read
     outputs:
       ci: ${{ steps.filter.outputs.ci }}
-      docs-structure: ${{ steps.filter.outputs.docs-structure }}
+      format: ${{ steps.filter.outputs.format }}
+      analyze: ${{ steps.filter.outputs.analyze }}
+      test: ${{ steps.filter.outputs.test }}
+      docs: ${{ steps.filter.outputs.docs }}
+      src: ${{ steps.filter.outputs.src }}
 
     steps:
       - name: Checkout
@@ -41,10 +57,56 @@ jobs:
         id: filter
         with:
           filters: |
+            # CI/CD 設定ファイル (GitHub Actions)
             ci:
+              - '.github/actions/**/*.yml'
+              - '.github/actions/**/*.yaml'
               - '.github/workflows/*.yml'
               - '.github/workflows/*.yaml'
 
-            docs-structure:
+            # フォーマット対象: dprint 設定 + dprint が管理するファイル (json, markdown, toml, yaml)
+            format:
+              - 'dprint.json'
+              - '**/*.md'
+              - '**/*.json'
+              - '**/*.toml'
+              - '**/*.yml'
+              - '**/*.yaml'
+
+            # 静的解析対象: ソースコード (lib/) の変更
+            analyze:
+              - '.github/workflows/pr-checks.yml'
+              - '.github/workflows/_changes.yml'
+              - 'mise.toml'
+              - 'analysis_options.yaml'
+              - 'app/**/lib/**/*'
+              - 'core/**/lib/**/*'
+              - 'feature/**/lib/**/*'
+              - '**/pubspec.yaml'
+              - '**/pubspec.lock'
+
+            # テスト対象: ソースコード (lib/) + テストコード (test/) の変更
+            test:
+              - '.github/workflows/pr-checks.yml'
+              - '.github/workflows/_changes.yml'
+              - 'mise.toml'
+              - 'app/**/lib/**/*'
+              - 'app/**/test/**/*'
+              - 'core/**/lib/**/*'
+              - 'core/**/test/**/*'
+              - 'feature/**/lib/**/*'
+              - 'feature/**/test/**/*'
+              - '**/pubspec.yaml'
+              - '**/pubspec.lock'
+
+            # ドキュメント
+            docs:
               - '**/*.md'
               - 'scripts/doc-lint.ts'
+              - 'docs/**/*'
+
+            # ソースコード (将来のデプロイ WF 等で使用予定)
+            src:
+              - '**/*.dart'
+              - '**/*.yaml'
+              - 'pubspec.lock'

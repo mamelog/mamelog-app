@@ -1,0 +1,99 @@
+name: Performance
+description: パフォーマンスの最適化・改善を提案する
+title: "perf: "
+labels: ["type:perf"]
+body:
+  - type: checkboxes
+    attributes:
+      label: 重複確認
+      description: 同様の Issue が存在しないことを確認してください。
+      options:
+        - label: 同様の Issue が存在しないことを確認しました
+          required: true
+
+  - type: textarea
+    id: overview
+    attributes:
+      label: 概要
+      description: パフォーマンス改善の概要を記述してください。
+      placeholder: |
+        何を最適化したいか、その背景・目的を簡潔に記述してください。
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 重要度
+      description: 改善の重要度を選択してください。
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: 影響範囲
+      description: この改善が影響する範囲を記述してください。
+      placeholder: |
+        例: 画像読み込み速度、画面遷移時間、メモリ使用量、バッテリー消費等
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-state
+    attributes:
+      label: 現在のパフォーマンス
+      description: 現在のパフォーマンス状況を記述してください。計測値があれば含めてください。
+      placeholder: |
+        現在の応答時間、メモリ使用量、フレームレート等の計測値を記述してください。
+
+  - type: textarea
+    id: recommended-approach
+    attributes:
+      label: 推奨される最適化方法
+      description: 最適化方法の案があれば記述してください。採用理由・代替案の不採用理由も含めると効果的です。
+      placeholder: |
+        最適化方法の案、採用理由、代替案の不採用理由等を記述してください。
+
+  - type: textarea
+    id: target-files
+    attributes:
+      label: 対象ファイル / パッケージ
+      description: 最適化対象のファイルやパッケージが特定できている場合は記述してください。
+      placeholder: |
+        例: feature/capture/lib/src/screen/capture_screen.dart
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: 受け入れ条件
+      description: この Issue が完了したと判断するための条件をチェックリスト形式で記述してください。
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+        - [ ] melos run analyze --no-select がパス
+    validations:
+      required: true
+
+  - type: textarea
+    id: test-strategy
+    attributes:
+      label: テスト方針
+      description: テストの方針があれば記述してください。パフォーマンス計測の方法も含めてください。
+      placeholder: |
+        例: プロファイリングで改善を確認、既存テストがパスすることを確認等
+
+  - type: textarea
+    id: references
+    attributes:
+      label: 参考
+      description: 参考となるドキュメント、Issue、コード等があればリンクを記述してください。
+      placeholder: |
+        - 関連 Issue: #xxx
+        - プロファイリング結果: ...
+        - 公式ドキュメント: https://...

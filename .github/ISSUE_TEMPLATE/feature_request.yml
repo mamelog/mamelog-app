@@ -1,0 +1,81 @@
+name: Feature Request
+description: 新機能を提案する
+title: "feat: "
+labels: ["type:feature"]
+body:
+  - type: checkboxes
+    attributes:
+      label: 重複確認
+      description: 同様の Issue が存在しないことを確認してください。
+      options:
+        - label: 同様の Issue が存在しないことを確認しました
+          required: true
+
+  - type: textarea
+    id: overview
+    attributes:
+      label: 概要
+      description: 提案する機能の概要を記述してください。
+      placeholder: |
+        どのような機能を追加したいか、その背景・目的を簡潔に記述してください。
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 重要度
+      description: 機能の重要度を選択してください。
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: 影響範囲
+      description: この機能が影響する範囲を記述してください。
+      placeholder: |
+        例: 新規画面追加、既存フローの変更、API 追加等
+
+  - type: textarea
+    id: recommended-approach
+    attributes:
+      label: 推奨される実装方法
+      description: 実装方法の案があれば記述してください。採用理由・代替案の不採用理由も含めると効果的です。
+      placeholder: |
+        実装方法の案、使用するライブラリ、アーキテクチャ上の考慮点等を記述してください。
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: 受け入れ条件
+      description: この Issue が完了したと判断するための条件をチェックリスト形式で記述してください。
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+        - [ ] melos run analyze --no-select がパス
+    validations:
+      required: true
+
+  - type: textarea
+    id: test-strategy
+    attributes:
+      label: テスト方針
+      description: テストの方針があれば記述してください。
+      placeholder: |
+        例: Cubit テスト、Widget テスト、E2E テスト等
+
+  - type: textarea
+    id: references
+    attributes:
+      label: 参考
+      description: 参考となるドキュメント、デザイン、Issue 等があればリンクを記述してください。
+      placeholder: |
+        - デザイン: Figma URL
+        - 関連 Issue: #xxx
+        - 公式ドキュメント: https://...

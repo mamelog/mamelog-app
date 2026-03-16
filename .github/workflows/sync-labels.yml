@@ -1,0 +1,62 @@
+# ラベル定義を GitHub リポジトリに同期するワークフロー
+#
+# 対象: main ブランチへの labels.yml 変更時 / 手動実行
+# 目的: .github/labels.yml をリポジトリのラベル設定と同期
+---
+name: Sync Labels
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/labels.yml
+      - .github/workflows/sync-labels.yml
+  pull_request:
+    paths:
+      - .github/labels.yml
+      - .github/workflows/sync-labels.yml
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  sync:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Load secrets
+        id: secrets
+        uses: ./.github/actions/load-secrets
+        with:
+          op-service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+      - name: Create GitHub App Token
+        id: app-token
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
+        with:
+          app-id: ${{ steps.secrets.outputs.app-id }}
+          private-key: ${{ steps.secrets.outputs.private-key }}
+
+      - name: Run Labeler
+        uses: crazy-max/ghaction-github-labeler@24d110aa46a59976b8a7f35518cb7f14f434c916 # v5.3.0
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          yaml-file: .github/labels.yml
+          dry-run: ${{ github.event_name == 'pull_request' }}
