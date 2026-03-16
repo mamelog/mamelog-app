@@ -1,0 +1,11 @@
+targets:
+  $default:
+    builders:
+      freezed:
+        options:
+          # Freezed 3.x options
+          union_value_case: snake
+          # when/map methods were removed in 3.0 but added back in 3.1.
+          # We can disable them if we prefer using native pattern matching.
+          when: false
+          map: false

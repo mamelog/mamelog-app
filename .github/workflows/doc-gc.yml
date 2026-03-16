@@ -11,9 +11,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+  contents: read
 
 defaults:
   run:
@@ -36,8 +34,8 @@ jobs:
       - name: Setup mise
         uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
 
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+      - name: Setup Bun
+        uses: ./.github/actions/setup-bun
 
       - name: Run freshness check
         id: freshness
@@ -53,13 +51,14 @@ jobs:
             const fs = require('fs');
             const stale = JSON.parse(fs.readFileSync('/tmp/stale.json', 'utf-8'));
 
-            const existing = await github.rest.issues.listForRepo({
+            const existing = await github.paginate(github.rest.issues.listForRepo, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               labels: 'stale-doc',
               state: 'open',
+              per_page: 100,
             });
-            const existingTitles = new Set(existing.data.map(i => i.title));
+            const existingTitles = new Set(existing.map(i => i.title));
 
             for (const doc of stale) {
               const title = `[stale-doc] ${doc.file} が ${doc.daysSinceUpdate}日未更新`;
@@ -90,19 +89,29 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
-      contents: write
+      contents: read
       pull-requests: write
     steps:
+      - name: Create GitHub App Token
+        id: app-token
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
+        with:
+          app-id: ${{ vars.ASSIST_BOT_APP_ID }}
+          private-key: ${{ secrets.ASSIST_BOT_PRIVATE_KEY }}
+
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Setup mise
         uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
+        with:
+          github_api_token: ${{ steps.app-token.outputs.token }}
 
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+      - name: Setup Bun
+        uses: ./.github/actions/setup-bun
 
       - name: Update quality score
         run: bun run scripts/quality-score-update.ts
@@ -119,11 +128,9 @@ jobs:
       - name: Create PR for quality score update
         if: steps.changes.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          BRANCH="chore/update-quality-score-$(date +%Y%m%d)"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          BRANCH="chore/update-quality-score-$(date +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH"
           git add docs/quality-score.md
           git commit -m "chore: 品質スコアを更新"

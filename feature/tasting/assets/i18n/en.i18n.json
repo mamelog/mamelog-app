@@ -1,0 +1,23 @@
+{
+  "listAppBarTitle": "Drink Logs",
+  "listEmptyTitle": "No records yet",
+  "listEmptySubtitle": "Track your coffee journey!",
+  "listButtonGoToLibrary": "Go to Library",
+  "addAppBarTitle": "New Tasting Note",
+  "addSectionRating": "Rating",
+  "addSectionTasteProfile": "Taste Profile",
+  "addSliderAcidity": "Acidity",
+  "addSliderAroma": "Aroma",
+  "addSliderSweetness": "Sweetness",
+  "addSliderBitterness": "Bitterness",
+  "addSliderBody": "Body",
+  "addSectionMemo": "Memo",
+  "addMemoHint": "Describe your experience...",
+  "detailAppBarTitle": "Tasting Detail",
+  "detailSectionRating": "Rating",
+  "detailSectionTasteProfile": "Taste Profile",
+  "detailSectionMemo": "Memo",
+  "detailNoMemo": "No memo.",
+  "detailSectionDate": "Date",
+  "editAppBarTitle": "Edit Tasting Note"
+}

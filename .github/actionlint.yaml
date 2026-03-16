@@ -1,0 +1,6 @@
+self-hosted-runner:
+  labels:
+    # GitHub-hosted の軽量ランナー (1 vCPU、ubuntu-latest の 1/4 コスト)
+    # 2025年10月パブリックプレビュー開始のため、actionlint が未対応
+    # https://github.blog/changelog/2025-10-28-1-vcpu-linux-runner-now-available-in-github-actions-in-public-preview/
+    - ubuntu-slim

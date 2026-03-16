@@ -1,0 +1,27 @@
+# Bun 環境をセットアップする Composite Action
+#
+# 前提: mise-action による Bun インストールは呼び出し元で実施済み
+# 目的: 依存関係キャッシュ、パッケージインストールを一括で行う
+---
+name: Setup Bun
+description: Cache Bun dependencies and install packages (requires Bun to be already installed via mise)
+
+runs:
+  using: composite
+  steps:
+    # Bun の依存関係キャッシュ
+    # - ~/.bun/install/cache: Bun のグローバルキャッシュ
+    # - node_modules: プロジェクトの依存関係
+    - name: Cache Bun dependencies
+      uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+      with:
+        path: |
+          ~/.bun/install/cache
+          node_modules
+        key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+        restore-keys: |
+          bun-${{ runner.os }}-
+
+    - name: Install dependencies
+      shell: bash
+      run: bun install --frozen-lockfile

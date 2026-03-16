@@ -1,0 +1,13 @@
+{
+  "appTitle": "Mamelog",
+  "navLibrary": "Library",
+  "navRecords": "Records",
+  "navAccount": "Account",
+  "notificationExtractionTitle": "Extraction Complete",
+  "notificationExtractionBody": "Coffee info extracted",
+  "commonButtonCancel": "Cancel",
+  "commonButtonSave": "Save",
+  "commonButtonOk": "OK",
+  "commonButtonRetry": "Retry",
+  "homeWelcome": "Welcome to Mamelog"
+}

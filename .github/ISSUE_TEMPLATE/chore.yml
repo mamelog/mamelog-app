@@ -1,0 +1,78 @@
+name: Chore / Tech Debt
+description: 依存関係更新・CI/CD 改善・設定変更・技術的負債の解消
+title: "chore: "
+labels: ["type:chore"]
+body:
+  - type: checkboxes
+    attributes:
+      label: 重複確認
+      description: 同様の Issue が存在しないことを確認してください。
+      options:
+        - label: 同様の Issue が存在しないことを確認しました
+          required: true
+
+  - type: textarea
+    id: overview
+    attributes:
+      label: 概要
+      description: 作業の概要を記述してください。
+      placeholder: |
+        何を行いたいか、その背景・目的を簡潔に記述してください。
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 重要度
+      description: 作業の重要度を選択してください。
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: 影響範囲
+      description: この作業が影響する範囲を記述してください。
+      placeholder: |
+        例: ビルド時間、CI パイプライン、開発環境、依存関係等
+
+  - type: textarea
+    id: recommended-approach
+    attributes:
+      label: 推奨される方法
+      description: 実施方法の案があれば記述してください。
+      placeholder: |
+        実施方法の案、使用するツール、注意点等を記述してください。
+
+  - type: textarea
+    id: target-files
+    attributes:
+      label: 対象ファイル / パッケージ
+      description: 対象のファイルやパッケージが特定できている場合は記述してください。
+      placeholder: |
+        例: pubspec.yaml, .github/workflows/ci.yml 等
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: 受け入れ条件
+      description: この Issue が完了したと判断するための条件をチェックリスト形式で記述してください。
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+        - [ ] CI が正常にパス
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: 参考
+      description: 参考となるドキュメント、Issue 等があればリンクを記述してください。
+      placeholder: |
+        - 関連 Issue: #xxx
+        - 公式ドキュメント: https://...

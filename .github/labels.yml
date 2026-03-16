@@ -20,6 +20,19 @@
   color: "b60205"
   description: "Introduces breaking changes"
 
+- name: "security"
+  color: "d73a4a"
+  description: "Security-related issue or fix"
+
+# Platform labels
+- name: "platform:ios"
+  color: "000000"
+  description: "iOS-specific issue"
+
+- name: "platform:android"
+  color: "3ddc84"
+  description: "Android-specific issue"
+
 # Size labels
 - name: "size:XS"
   color: "009800"
@@ -53,6 +66,7 @@
 - name: "do-not-merge"
   color: "b60205"
   description: "This PR should not be merged yet"
+  from_name: "DO NOT MERGE"
 
 - name: "duplicate"
   color: "cfd8d7"
@@ -65,14 +79,17 @@
 - name: "good-first-issue"
   color: "fe9b9c"
   description: "Good for newcomers"
+  from_name: "good first issue"
 
 - name: "help-wanted"
   color: "008672"
   description: "Extra attention is needed"
+  from_name: "help wanted"
 
 - name: "ignore-for-release"
   color: "bfd4f2"
   description: "Exclude from Release Notes"
+  from_name: "ignore for release"
 
 - name: "wontfix"
   color: "ffffff"
@@ -81,6 +98,7 @@
 - name: "work-in-progress"
   color: "e5d19e"
   description: "Work is still in progress"
+  from_name: "work in progress"
 
 # Type labels
 - name: "type:feature"
@@ -107,9 +125,106 @@
   color: "ededed"
   description: "Changes to our CI configuration files and scripts"
 
+- name: "type:perf"
+  color: "ededed"
+  description: "A code change that improves performance"
+
+- name: "type:test"
+  color: "ededed"
+  description: "Adding missing tests or correcting existing tests"
+
+- name: "type:build"
+  color: "ededed"
+  description: "Changes that affect the build system or external dependencies"
+
 - name: "type:chore"
   color: "ededed"
   description: "Other changes that don't modify src or test files"
+
+- name: "type:revert"
+  color: "ededed"
+  description: "Reverts a previous commit"
+
+# Package labels
+- name: "package:app/mobile"
+  color: "c5def5"
+  description: "Changes to app/mobile"
+
+- name: "package:app/shared"
+  color: "c5def5"
+  description: "Changes to app/shared"
+
+- name: "package:core/authenticator"
+  color: "c5def5"
+  description: "Changes to core/authenticator"
+
+- name: "package:core/common"
+  color: "c5def5"
+  description: "Changes to core/common"
+
+- name: "package:core/data"
+  color: "c5def5"
+  description: "Changes to core/data"
+
+- name: "package:core/database"
+  color: "c5def5"
+  description: "Changes to core/database"
+
+- name: "package:core/database_drift"
+  color: "c5def5"
+  description: "Changes to core/database_drift"
+
+- name: "package:core/datastore"
+  color: "c5def5"
+  description: "Changes to core/datastore"
+
+- name: "package:core/datastore_shared_preferences"
+  color: "c5def5"
+  description: "Changes to core/datastore_shared_preferences"
+
+- name: "package:core/designsystem"
+  color: "c5def5"
+  description: "Changes to core/designsystem"
+
+- name: "package:core/domain"
+  color: "c5def5"
+  description: "Changes to core/domain"
+
+- name: "package:core/model"
+  color: "c5def5"
+  description: "Changes to core/model"
+
+- name: "package:core/network"
+  color: "c5def5"
+  description: "Changes to core/network"
+
+- name: "package:core/testing"
+  color: "c5def5"
+  description: "Changes to core/testing"
+
+- name: "package:core/ui"
+  color: "c5def5"
+  description: "Changes to core/ui"
+
+- name: "package:feature/auth"
+  color: "c5def5"
+  description: "Changes to feature/auth"
+
+- name: "package:feature/capture"
+  color: "c5def5"
+  description: "Changes to feature/capture"
+
+- name: "package:feature/library"
+  color: "c5def5"
+  description: "Changes to feature/library"
+
+- name: "package:feature/stats"
+  color: "c5def5"
+  description: "Changes to feature/stats"
+
+- name: "package:feature/tasting"
+  color: "c5def5"
+  description: "Changes to feature/tasting"
 
 # Garbage Collection labels
 - name: "stale-doc"

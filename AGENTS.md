@@ -46,7 +46,7 @@ melos run deps:validate          # Validate dependency correctness
 
 Format: `{type}({scope}): {Japanese description}`
 
-- Valid scopes: `app`, `core`, `feature` (defined in `commitlint.config.ts`)
+- Valid scopes: package directory names under `app/`, `core/`, `feature/` (defined in `commitlint.config.ts`)
 - Scope is optional; omit when changes span multiple scopes
 - Description and body in Japanese
 - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`

@@ -1,0 +1,55 @@
+# PR タイトルが Conventional Commits 形式に準拠しているかを検証するワークフロー
+#
+# 対象: PR の作成・編集時
+# 目的: PR タイトルのセマンティック検証によるリリースノート品質向上
+---
+name: "PR: Semantic"
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - reopened
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  semantic-pull-request:
+    name: Semantic Pull Request
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Create GitHub App Token
+        id: app-token
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
+        with:
+          app-id: ${{ vars.ASSIST_BOT_APP_ID }}
+          private-key: ${{ secrets.ASSIST_BOT_PRIVATE_KEY }}
+
+      - uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+
+  gate:
+    name: Semantic
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    needs:
+      - semantic-pull-request
+    permissions: {}
+    if: always()
+    steps:
+      - name: Check job results
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: exit 1

@@ -1,45 +1,64 @@
 # https://lefthook.dev/configuration/
 min_version: 2.1.0
 assert_lefthook_installed: true
+glob_matcher: doublestar
 
 output:
+  - meta
   - summary
   - failure
-  - execution
+  - execution_out
   - skips
 
 pre-commit:
-  piped: true
   skip:
     - merge
     - rebase
-  commands:
-    dprint:
-      priority: 1
-      glob: "*.{md,yaml,yml,json}"
-      run: node_modules/.bin/dprint fmt --allow-no-files {staged_files}
-      stage_fixed: true
-    pinact:
-      priority: 1
-      glob: ".github/workflows/*.{yml,yaml}"
-      run: pinact run {staged_files}
-      stage_fixed: true
-    actionlint:
-      priority: 2
-      glob: ".github/workflows/*.{yml,yaml}"
-      run: actionlint --color {staged_files}
-    doc-lint:
-      priority: 3
-      glob: "*.md"
-      run: bun run scripts/doc-lint.ts {staged_files}
+  jobs:
+    # Phase 1: format -> pin (piped: workflow YAML が両方の対象に重複するため順序依存)
+    - group:
+        piped: true
+        jobs:
+          - name: dprint
+            glob: "**/*.{md,yaml,yml,json,toml}"
+            run: mise exec -- bunx dprint fmt --allow-no-files {staged_files}
+            stage_fixed: true
+          - name: pinact
+            glob: ".github/{workflows,actions}/**/*.{yml,yaml}"
+            run: pinact run {staged_files}
+            stage_fixed: true
+    # Phase 2: dart format (piped: format -> stage)
+    - group:
+        piped: true
+        jobs:
+          - name: dart-format
+            glob: "**/*.dart"
+            exclude: "**/*.{g,freezed,gen,config,module}.dart"
+            run: dart format {staged_files}
+            stage_fixed: true
+    # Phase 3: lint (parallel: 互いに独立)
+    - group:
+        parallel: true
+        jobs:
+          - name: actionlint
+            glob: ".github/workflows/**/*.{yml,yaml}"
+            run: actionlint --color {staged_files}
+            fail_text: "actionlint: GitHub Actions ワークフローの構文エラー。https://github.com/rhysd/actionlint を参照"
+          - name: doc-lint
+            glob: "**/*.md"
+            run: bun run scripts/doc-lint.ts {staged_files}
+          - name: flutter-analyze
+            glob: "**/*.dart"
+            run: flutter analyze --no-pub
+            fail_text: "flutter analyze: 静的解析エラー。修正してからコミットしてください"
 
 commit-msg:
   skip:
     - merge
     - rebase
-  commands:
-    commitlint:
-      run: node_modules/.bin/commitlint --edit "$1"
+  jobs:
+    - name: commitlint
+      run: mise exec -- bunx commitlint --edit "$1"
       fail_text: |
         [NG] コミットメッセージが規約に違反しています
 
@@ -47,34 +66,21 @@ commit-msg:
         type: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
         scope (任意): app, core, feature
 
-post-merge:
+_post-install: &post-install
   piped: true
-  commands:
-    mise-install:
-      glob: "mise.toml"
+  jobs:
+    - name: mise-install
       run: |
-        echo "[INFO] mise.toml が変更されました。ツールをインストールしています..."
+        echo "[INFO] ツールバージョンを同期しています..."
         mise install
-      priority: 1
-    bun-install:
-      glob: "{package.json,bun.lock}"
+    - name: bun-install
       run: |
-        echo "[INFO] 依存関係が変更されました。bun install を実行しています..."
+        echo "[INFO] 依存関係を同期しています..."
         bun install
-      priority: 2
+    - name: melos-bootstrap
+      run: |
+        echo "[INFO] Dart 依存関係を同期しています..."
+        melos bootstrap
 
-post-checkout:
-  piped: true
-  commands:
-    mise-install:
-      glob: "mise.toml"
-      run: |
-        echo "[INFO] mise.toml が変更されました。ツールをインストールしています..."
-        mise install
-      priority: 1
-    bun-install:
-      glob: "{package.json,bun.lock}"
-      run: |
-        echo "[INFO] 依存関係が変更されました。bun install を実行しています..."
-        bun install
-      priority: 2
+post-merge: *post-install
+post-checkout: *post-install

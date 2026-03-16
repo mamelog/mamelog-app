@@ -1,0 +1,27 @@
+# lefthook-local.yml -- ローカル環境専用の hook 設定テンプレート
+#
+# 使い方:
+#   cp lefthook-local.yml.example lefthook-local.yml
+#   必要に応じて編集してください (.gitignore 済み)
+#
+# 参考: https://lefthook.dev/configuration/local.html
+#
+# [IMPORTANT] フックは基本的にスキップしないでください。
+# コード品質を保つため、すべてのチェックを通過してからコミット/プッシュすることを推奨します。
+#
+# やむを得ずスキップが必要な場合のみ、環境変数を使用してください:
+#   LEFTHOOK_EXCLUDE=build-ios git push
+#
+# [NOTE] Lefthook 2.x では skip のみの上書きはバリデーションエラーになります。
+
+# pre-push ビルドチェック（macOS 専用）
+# 開発中のプラットフォームに応じて有効化/無効化してください
+pre-push:
+  commands:
+    # iOS ビルドチェック (macOS のみ)
+    build-ios:
+      glob: "{app/mobile/lib/**/*.dart,core/*/lib/**/*.dart,feature/*/lib/**/*.dart,app/mobile/ios/**/*.{plist,pbxproj,xcconfig,swift,h,m},app/mobile/ios/Podfile,app/mobile/ios/Podfile.lock,app/mobile/pubspec.yaml,app/mobile/pubspec.lock}"
+      exclude: "{**/*.g.dart,**/*.freezed.dart,**/*.gen.dart,**/Pods/**,**/DerivedData/**,**/build/**}"
+      run: |
+        echo "[INFO] Verifying iOS build..."
+        cd app/mobile && flutter build ios --debug --no-codesign --flavor dev --no-pub

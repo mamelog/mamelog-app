@@ -1,0 +1,37 @@
+include:
+  - package:very_good_analysis/analysis_options.yaml
+  - package:bloc_lint/recommended.yaml
+
+formatter:
+  page_width: 100
+
+analyzer:
+  errors:
+    # NOTE: formatter -> page_width: 100 の設定と競合するため無効化
+    lines_longer_than_80_chars: ignore
+    # info レベルの警告をエラーとして扱う
+    discarded_futures: error
+    avoid_types_on_closure_parameters: error
+  exclude:
+    - "**/build/**"
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.gen.dart"
+
+linter:
+  rules:
+    # プロジェクト全体でドキュメントカバレッジが不十分なため無効化
+    public_member_api_docs: false
+    # インターフェース設計パターン (abstract interface class) と相性が悪いため無効化
+    one_member_abstracts: false
+    # テスト用 Fake クラスの setter メソッドに誤検知するため無効化
+    use_setters_to_change_properties: false
+
+bloc:
+  rules:
+    # Cubit 内でカメラ/画像系の Flutter API を使用するケースが正当に存在するため無効化
+    avoid_flutter_imports: false
+    # getter で Cubit 状態を公開するパターンが定着しているため無効化
+    prefer_void_public_cubit_methods: false
+    # 小さな Cubit は同一ファイル内に定義する規約があるため無効化
+    prefer_file_naming_conventions: false

@@ -1,0 +1,22 @@
+{
+  "onboardingTitle": "Mamelog",
+  "onboardingSubtitle": "Your Coffee, Your Library",
+  "onboardingButtonGoogle": "Sign in with Google",
+  "onboardingButtonApple": "Sign in with Apple",
+  "accountAppBarTitle": "Account",
+  "accountNotSignedIn": "Not signed in",
+  "accountNoName": "No name",
+  "accountNoEmail": "No email",
+  "accountButtonLogout": "Logout",
+  "accountDialogLogoutTitle": "Logout",
+  "accountDialogLogoutMessage": "Are you sure you want to logout?",
+  "accountButtonDeleteAccount": "Delete Account",
+  "accountDialogDeleteTitle": "Delete Account",
+  "accountDialogDeleteMessage": "Are you sure? This action cannot be undone.",
+  "accountDialogDeleteConfirm": "Delete",
+  "accountDialogFinalTitle": "Final Confirmation",
+  "accountDialogFinalMessage": "All data will be completely deleted.",
+  "accountDialogFinalConfirm": "Delete Completely",
+  "accountDialogReauthTitle": "Re-authentication Required",
+  "accountDialogReauthMessage": "To delete your account, please sign in again."
+}

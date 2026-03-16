@@ -1,0 +1,4 @@
+enum BeanType {
+  singleOrigin,
+  blend,
+}

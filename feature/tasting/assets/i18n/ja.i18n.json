@@ -1,0 +1,23 @@
+{
+  "listAppBarTitle": "記録",
+  "listEmptyTitle": "まだ記録がありません",
+  "listEmptySubtitle": "コーヒーの旅を記録しましょう！",
+  "listButtonGoToLibrary": "ライブラリへ",
+  "addAppBarTitle": "新しいテイスティングノート",
+  "addSectionRating": "評価",
+  "addSectionTasteProfile": "テイストプロファイル",
+  "addSliderAcidity": "酸味",
+  "addSliderAroma": "香り",
+  "addSliderSweetness": "甘味",
+  "addSliderBitterness": "苦味",
+  "addSliderBody": "ボディ",
+  "addSectionMemo": "メモ",
+  "addMemoHint": "体験を記録してください...",
+  "detailAppBarTitle": "テイスティング詳細",
+  "detailSectionRating": "評価",
+  "detailSectionTasteProfile": "テイストプロファイル",
+  "detailSectionMemo": "メモ",
+  "detailNoMemo": "メモなし。",
+  "detailSectionDate": "日付",
+  "editAppBarTitle": "テイスティングノートを編集"
+}

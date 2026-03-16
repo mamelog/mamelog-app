@@ -1,0 +1,13 @@
+{
+  "listAppBarTitle": "My Library",
+  "listEmptyTitle": "Your library is empty",
+  "listEmptySubtitle": "Scan your first coffee bean bag!",
+  "listButtonAddCoffee": "Add Coffee",
+  "detailAppBarTitle": "Coffee Detail",
+  "detailRoastLevel": "Roast Level",
+  "detailBeanType": "Bean Type",
+  "detailUnknown": "Unknown",
+  "detailButtonAddTasting": "Add Tasting Note",
+  "detailSectionDescription": "Description",
+  "detailNoDescription": "No description provided."
+}

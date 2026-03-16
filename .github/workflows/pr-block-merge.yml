@@ -1,0 +1,57 @@
+# ブロッキングラベルが付与された PR のマージを防止するワークフロー
+#
+# 対象: PR のラベル追加・削除時
+# 目的: do-not-merge, work-in-progress ラベルによる誤マージ防止
+---
+name: "PR: Block Merge Labels"
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - labeled
+      - unlabeled
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions: {}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  block-merge-labels:
+    name: Block Merge Labels
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    steps:
+      - name: Check for blocking labels
+        env:
+          BLOCKING_LABELS: "do-not-merge,work-in-progress"
+          PR_LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
+        run: |
+          IFS=',' read -ra LABELS <<< "$BLOCKING_LABELS"
+          for label in "${LABELS[@]}"; do
+            if echo "$PR_LABELS" | grep -qi "\"$label\""; then
+              echo "::error::PR has blocking label: $label"
+              exit 1
+            fi
+          done
+          echo "No blocking labels found"
+
+  gate:
+    name: Block Merge
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    needs:
+      - block-merge-labels
+    permissions: {}
+    if: always()
+    steps:
+      - name: Check job results
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: exit 1
