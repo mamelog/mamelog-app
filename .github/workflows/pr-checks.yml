@@ -11,9 +11,10 @@ on:
       - opened
       - synchronize
       - reopened
+  merge_group:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -179,6 +180,8 @@ jobs:
     permissions: {}
     if: always()
     steps:
-      - name: Check job results
-        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
-        run: exit 1
+      - uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe # v1.2.2
+        with:
+          jobs: ${{ toJSON(needs) }}
+          # パスフィルタ (_changes.yml) でスキップされるジョブを許容
+          allowed-skips: actionlint, format, doc-lint, analyze, test
