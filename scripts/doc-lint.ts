@@ -27,7 +27,7 @@ interface ParseResult {
 const FRONTMATTER_REQUIRED_DIRS = ["docs"];
 const FRONTMATTER_REQUIRED_FIELDS = ["title", "date", "status"];
 const VALID_STATUSES = ["draft", "review", "approved", "outdated"];
-const SKIP_KEBAB_CHECK = new Set(["index", "summary", "README", "AGENTS", "CLAUDE"]);
+const SKIP_KEBAB_CHECK = new Set(["index", "summary", "README", "AGENTS", "CLAUDE", "PULL_REQUEST_TEMPLATE", "CONTRIBUTING"]);
 const CONTENT_DIRS = ["docs"];
 
 // --- Pure Functions ---

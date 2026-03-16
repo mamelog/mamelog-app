@@ -1,0 +1,229 @@
+name: mamelog_app
+publish_to: none
+
+environment:
+  sdk: ^3.11.1
+  flutter: ^3.41.0
+
+workspace:
+  # app
+  - app/mobile
+  - app/shared
+  # core
+  - core/authenticator
+  - core/common
+  - core/data
+  - core/database
+  - core/database_drift
+  - core/datastore
+  - core/datastore_shared_preferences
+  - core/designsystem
+  - core/domain
+  - core/model
+  - core/network
+  - core/testing
+  - core/ui
+  # feature
+  - feature/auth
+  - feature/capture
+  - feature/library
+  - feature/stats
+  - feature/tasting
+
+dependencies:
+  core_authenticator:
+    path: core/authenticator
+  core_common:
+    path: core/common
+  core_data:
+    path: core/data
+  core_database:
+    path: core/database
+  core_database_drift:
+    path: core/database_drift
+  core_datastore:
+    path: core/datastore
+  core_designsystem:
+    path: core/designsystem
+  core_domain:
+    path: core/domain
+  core_model:
+    path: core/model
+  core_network:
+    path: core/network
+  core_ui:
+    path: core/ui
+  feature_auth:
+    path: feature/auth
+  feature_capture:
+    path: feature/capture
+  feature_library:
+    path: feature/library
+
+dev_dependencies:
+  bloc_lint: ^0.4.0
+  build_runner: ^2.4.15
+  dependency_validator: ^5.0.4
+  injectable_generator: ^2.12.1
+  melos: ^7.4.0
+  very_good_analysis: ^10.2.0
+
+dependency_overrides:
+  test_api: ^0.7.9
+
+melos:
+  ide:
+    intellij:
+      enabled: false
+
+  scripts:
+    codegen:
+      description: build_runner を使用してコードを生成し、フォーマットを適用します。
+      steps:
+        - codegen:build
+        - format
+    codegen:build:
+      description: build_runner を使用してコードを生成します。
+      run: dart run build_runner build -d
+      exec:
+        failFast: true
+        orderDependents: true
+      packageFilters:
+        dependsOn: build_runner
+    codegen:diff:head:
+      description: 未コミットの差分パッケージのみコード生成し、フォーマットを適用します。
+      steps:
+        - codegen:build:diff:head
+        - format
+    codegen:build:diff:head:
+      description: 未コミットの差分パッケージのみコードを生成します。
+      run: dart run build_runner build -d
+      exec:
+        failFast: true
+        orderDependents: true
+      packageFilters:
+        dependsOn: build_runner
+        diff: "" # --diff=HEAD のワークアラウンド https://github.com/invertase/melos/issues/759
+    codegen:diff:main:
+      description: main ブランチと差分のあるパッケージのみコード生成し、フォーマットを適用します。
+      steps:
+        - codegen:build:diff:main
+        - format
+    codegen:build:diff:main:
+      description: main ブランチと差分のあるパッケージのみコードを生成します。
+      run: dart run build_runner build -d
+      exec:
+        failFast: true
+        orderDependents: true
+      packageFilters:
+        dependsOn: build_runner
+        diff: origin/main...HEAD
+
+    analyze:
+      description: 静的解析を実行します。
+      steps:
+        - analyze:dart
+        - analyze:flutter
+        - bloc:lint
+    bloc:lint:
+      description: bloc_lint を使用して Bloc/Cubit の静的解析を実行します。
+      run: bloc lint .
+    analyze:dart:
+      description: Dart パッケージの静的解析を実行します。
+      run: dart analyze --fatal-infos
+      exec:
+        failFast: true
+      packageFilters:
+        flutter: false
+    analyze:flutter:
+      description: Flutter パッケージの静的解析を実行します。
+      run: flutter analyze --no-pub --fatal-infos
+      exec:
+        concurrency: 1
+        failFast: true
+      packageFilters:
+        flutter: true
+
+    fix:
+      description: すべてのパッケージに dart fix を実行します。
+      steps:
+        - fix:lib
+        - fix:test
+    fix:lib:
+      description: lib ディレクトリに dart fix を実行します。
+      exec: dart fix --apply lib
+      packageFilters:
+        dirExists: lib
+    fix:test:
+      description: test ディレクトリに dart fix を実行します。
+      exec: dart fix --apply test
+      packageFilters:
+        dirExists: test
+
+    format:
+      description: すべてのパッケージのコードをフォーマットします。
+      exec: >-
+        find lib -name "*.dart"
+        -not -path "*/\.*"
+        -not -path "*/build/*"
+        -not -path "*/generated/*"
+        -not -name "*.g.dart"
+        -not -name "*.freezed.dart"
+        -not -name "*.gen.dart" | xargs dart format
+      packageFilters:
+        dirExists: lib
+
+    slang:analyze:
+      description: slang の未使用・未翻訳キーを検出します。
+      run: dart run slang analyze --full
+      exec:
+        failFast: true
+        concurrency: 1
+      packageFilters:
+        dependsOn: slang_build_runner
+    slang:normalize:
+      description: slang の翻訳キー順序を正規化します。
+      run: dart run slang normalize
+      exec:
+        concurrency: 1
+      packageFilters:
+        dependsOn: slang_build_runner
+
+    deps:validate:
+      description: 依存関係の過不足を検証します。
+      run: dart run dependency_validator
+      exec:
+        failFast: true
+        concurrency: 1
+      packageFilters:
+        ignore:
+          - mamelog_app
+
+    test:
+      description: すべてのパッケージのテストを実行します。
+      steps:
+        - test:dart
+        - test:flutter
+    test:dart:
+      description: Dart パッケージのテストを実行します。
+      run: dart test
+      exec:
+        failFast: true
+      packageFilters:
+        dependsOn: test
+        dirExists: test
+        flutter: false
+      env:
+        MELOS_TEST: true
+    test:flutter:
+      description: Flutter パッケージのテストを実行します。
+      run: flutter test --no-pub
+      exec:
+        concurrency: 1
+        failFast: true
+      packageFilters:
+        dependsOn: flutter_test
+        dirExists: test
+        flutter: true
+      env:
+        MELOS_TEST: true

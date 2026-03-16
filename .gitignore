@@ -1,8 +1,9 @@
 # Flutter/Dart
 .dart_tool/
 .packages
+.flutter-plugins
+.flutter-plugins-dependencies
 build/
-*.iml
 
 # iOS
 ios/Pods/
@@ -19,20 +20,47 @@ ios/Flutter/Flutter.podspec
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.*
 
-# IDE
-.idea/
+# IDE - IntelliJ
+*.iml
 *.swp
 *.swo
-.vscode/
+.idea/*
+!.idea/icon.png
+# Keep specific run configurations (not auto-generated ones).
+!/.idea/runConfigurations/
+.idea/runConfigurations/*
+!/.idea/runConfigurations/flutter_run_app_catalog.xml
+!/.idea/runConfigurations/flutter_run_app_mobile_dev.xml
+!/.idea/runConfigurations/flutter_run_app_mobile_prod.xml
+!/.idea/runConfigurations/flutter_run_app_mobile_stg.xml
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
 
 # Melos
 .melos/
+pubspec_overrides.yaml
 
 # Node.js
 node_modules/
 
 # OS
 .DS_Store
+
+# Lefthook
+lefthook-local.yml
+
+# Claude Code
+.claude/settings.local.json
+
+# slang (i18n analysis output)
+**/_missing_translations.json
+**/_unused_translations.json
 
 # Misc
 *.log

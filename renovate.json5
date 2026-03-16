@@ -1,0 +1,143 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests",
+    ":automergeMinor",
+    ":semanticCommits",
+  ],
+  "timezone": "Asia/Tokyo",
+  "rebaseWhen": "never",
+  // サプライチェーン攻撃対策: リリースから3日経過後に更新を提案
+  "minimumReleaseAge": "3 days",
+  // OSVデータベースを使用した脆弱性アラート
+  "osvVulnerabilityAlerts": true,
+  // 推移的依存関係を含むロックファイルの定期更新
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+  },
+  "schedule": [
+    // 毎週月曜日 7:00-7:59 (JST) に実行
+    // Note: Renovate は分単位の精度をサポートしないため、分は * 必須
+    "* 7 * * 1",
+  ],
+  "dependencyDashboard": false,
+  // CI リソース保護のため PR 同時作成数を制限
+  "prConcurrentLimit": 10,
+  "branchConcurrentLimit": 10,
+  "pruneBranchAfterAutomerge": true,
+  "packageRules": [
+    {
+      // pub (Flutter) は Pub workspaces を使用しており、Renovate 環境に Flutter SDK がないため除外
+      "description": "Disable lockFileMaintenance for non-bun managers",
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "matchManagers": ["!bun"],
+      "enabled": false,
+    },
+    {
+      "groupName": "github-actions non-major dependencies",
+      "groupSlug": "github-actions-minor-patch",
+      "matchManagers": [
+        "github-actions",
+      ],
+      "matchPackageNames": [
+        "*",
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+      ],
+    },
+    {
+      // Bun 依存の minor/patch をグループ化
+      "groupName": "bun non-major dependencies",
+      "groupSlug": "bun-minor-patch",
+      "matchManagers": [
+        "bun",
+      ],
+      "matchPackageNames": [
+        "*",
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+      ],
+    },
+    {
+      // pub 依存の minor/patch をグループ化
+      // 除外パッケージ:
+      //   - collection: Flutter SDK の内部依存と競合する可能性があるため個別更新
+      //   - intl: breaking change が minor でも発生しやすいため個別更新
+      //   - test: テストフレームワークは慎重に更新するため個別更新
+      "groupName": "pub non-major dependencies",
+      "groupSlug": "pub-minor-patch",
+      "matchManagers": [
+        "pub",
+      ],
+      "matchPackageNames": [
+        "*",
+        "!collection",
+        "!intl",
+        "!test",
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+      ],
+    },
+    {
+      // Flutter/Dart SDK: minor/patch のみグループ化、major は個別PRで手動確認
+      "groupName": "flutter",
+      "matchPackageNames": [
+        "dart",
+        "flutter",
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+      ],
+    },
+    {
+      // Flutter/Dart SDK の major 更新は互換性確認が必要なため automerge 無効
+      "description": "Disable automerge for Flutter/Dart major updates",
+      "matchPackageNames": [
+        "dart",
+        "flutter",
+      ],
+      "matchUpdateTypes": [
+        "major",
+      ],
+      "automerge": false,
+    },
+    {
+      "groupName": "bloc",
+      "matchPackageNames": [
+        "bloc",
+        "bloc_test",
+        "flutter_bloc",
+      ],
+    },
+    {
+      "groupName": "injectable",
+      "matchPackageNames": [
+        "injectable",
+        "injectable_generator",
+      ],
+    },
+    {
+      "groupName": "firebase",
+      "matchPackageNames": [
+        "cloud_firestore",
+        "firebase_*",
+      ],
+    },
+    {
+      // Flutter SDKに含まれる内部Gradleプラグインの更新チェックを無効化
+      "description": "Ignore Flutter internal gradle plugins",
+      "matchFileNames": ["**/settings.gradle.kts"],
+      "matchPackageNames": ["dev.flutter.flutter-plugin-loader"],
+      "enabled": false,
+    },
+  ],
+}

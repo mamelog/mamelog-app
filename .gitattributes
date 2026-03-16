@@ -1,0 +1,32 @@
+# Line endings
+# All files: auto-detect text files and normalize to LF
+* text=auto eol=lf
+# Windows batch files: keep CRLF line endings
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf
+
+# Generated files (excluded from GitHub stats and collapsed in PR diffs)
+# build_runner: json_serializable, retrofit, drift, go_router, envied
+*.g.dart linguist-generated=true
+# freezed: immutable data classes
+*.freezed.dart linguist-generated=true
+# flutter_gen: asset constants
+*.gen.dart linguist-generated=true
+# injectable: DI configuration
+*.config.dart linguist-generated=true
+# injectable: micromodule DI registration
+*.module.dart linguist-generated=true
+
+# Binary files (prevent line ending conversion and corruption)
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+# Fonts
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
