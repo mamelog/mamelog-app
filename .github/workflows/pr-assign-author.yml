@@ -27,22 +27,12 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - name: Load secrets
-        id: load-secrets
-        uses: 1password/load-secrets-action@581a835451841d94ec67812bc2630328883c9c44 # v2.0.0
-        with:
-          export-env: false
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          APP_ID: op://mamelog-ci/mamelog-assist-bot/app-id
-          PRIVATE_KEY: op://mamelog-ci/mamelog-assist-bot/private-key
-
       - name: Create GitHub App Token
         id: app-token
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
         with:
-          app-id: ${{ steps.load-secrets.outputs.APP_ID }}
-          private-key: ${{ steps.load-secrets.outputs.PRIVATE_KEY }}
+          app-id: ${{ vars.ASSIST_BOT_APP_ID }}
+          private-key: ${{ secrets.ASSIST_BOT_PRIVATE_KEY }}
 
       - name: Assign Author
         uses: technote-space/assign-author@9558557c5c4816f38bd06176fbc324ba14bb3160 # v1.6.2

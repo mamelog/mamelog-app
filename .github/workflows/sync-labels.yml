@@ -41,18 +41,12 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Load secrets
-        id: secrets
-        uses: ./.github/actions/load-secrets
-        with:
-          op-service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-
       - name: Create GitHub App Token
         id: app-token
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
         with:
-          app-id: ${{ steps.secrets.outputs.app-id }}
-          private-key: ${{ steps.secrets.outputs.private-key }}
+          app-id: ${{ vars.ASSIST_BOT_APP_ID }}
+          private-key: ${{ secrets.ASSIST_BOT_PRIVATE_KEY }}
 
       - name: Run Labeler
         uses: crazy-max/ghaction-github-labeler@24d110aa46a59976b8a7f35518cb7f14f434c916 # v5.3.0

@@ -108,18 +108,12 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Load secrets
-        id: secrets
-        uses: ./.github/actions/load-secrets
-        with:
-          op-service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-
       - name: Create GitHub App Token
         id: app-token
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
         with:
-          app-id: ${{ steps.secrets.outputs.app-id }}
-          private-key: ${{ steps.secrets.outputs.private-key }}
+          app-id: ${{ vars.ASSIST_BOT_APP_ID }}
+          private-key: ${{ secrets.ASSIST_BOT_PRIVATE_KEY }}
 
       - name: Setup mise
         uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
@@ -145,18 +139,12 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Load secrets
-        id: secrets
-        uses: ./.github/actions/load-secrets
-        with:
-          op-service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-
       - name: Create GitHub App Token
         id: app-token
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
         with:
-          app-id: ${{ steps.secrets.outputs.app-id }}
-          private-key: ${{ steps.secrets.outputs.private-key }}
+          app-id: ${{ vars.ASSIST_BOT_APP_ID }}
+          private-key: ${{ secrets.ASSIST_BOT_PRIVATE_KEY }}
 
       - name: Setup mise
         uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1

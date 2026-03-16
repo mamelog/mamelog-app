@@ -92,22 +92,12 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: Load secrets
-        id: load-secrets
-        uses: 1password/load-secrets-action@581a835451841d94ec67812bc2630328883c9c44 # v2.0.0
-        with:
-          export-env: false
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          APP_ID: op://mamelog-ci/mamelog-assist-bot/app-id
-          PRIVATE_KEY: op://mamelog-ci/mamelog-assist-bot/private-key
-
       - name: Create GitHub App Token
         id: app-token
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
         with:
-          app-id: ${{ steps.load-secrets.outputs.APP_ID }}
-          private-key: ${{ steps.load-secrets.outputs.PRIVATE_KEY }}
+          app-id: ${{ vars.ASSIST_BOT_APP_ID }}
+          private-key: ${{ secrets.ASSIST_BOT_PRIVATE_KEY }}
 
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
