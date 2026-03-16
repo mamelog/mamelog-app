@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "151390765874",
+    "project_id": "mamelog-coffee",
+    "storage_bucket": "mamelog-coffee.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:151390765874:android:a3b1ffa4a0908669728d2b",
+        "android_client_info": {
+          "package_name": "coffee.mamelog.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9v8GCUGKhJoRotErUtUM13itutqd3ufo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

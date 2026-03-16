@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "856259101915",
+    "project_id": "mamelog-coffee-dev",
+    "storage_bucket": "mamelog-coffee-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:856259101915:android:03b5d40dcb6558f109b8fe",
+        "android_client_info": {
+          "package_name": "coffee.mamelog.app.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "856259101915-fma54t50baimgq9nq4lj6qso19r8pb8f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "coffee.mamelog.app.dev",
+            "certificate_hash": "45953e05dbb163d0a0ce715eba3d1a7e3ed78665"
+          }
+        },
+        {
+          "client_id": "856259101915-pb89477uu5qocojprngv4flpmo5uatbv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnTJxFXGh6hWtt6P3M-esFU5AqIH80SCo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "856259101915-pb89477uu5qocojprngv4flpmo5uatbv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "856259101915-u89lf5r7lo0vpvt69gs1lugu426phl4p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "coffee.mamelog.app.dev"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,36 @@
+name: app_shared
+publish_to: none
+resolution: workspace
+description: "Shared application logic for Mamelog."
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: ^3.11.1
+  flutter: ^3.41.0
+
+dependencies:
+  core_common:
+    path: ../../core/common
+  core_designsystem:
+    path: ../../core/designsystem
+  core_ui:
+    path: ../../core/ui
+  feature_auth:
+    path: ../../feature/auth
+  feature_capture:
+    path: ../../feature/capture
+  feature_library:
+    path: ../../feature/library
+  feature_stats:
+    path: ../../feature/stats
+  feature_tasting:
+    path: ../../feature/tasting
+  flutter:
+    sdk: flutter
+  slang: ^4.12.1
+  slang_flutter: ^4.12.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

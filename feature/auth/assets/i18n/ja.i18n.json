@@ -1,0 +1,22 @@
+{
+  "onboardingTitle": "まめログ",
+  "onboardingSubtitle": "あなたのコーヒー、あなたのライブラリ",
+  "onboardingButtonGoogle": "Googleでサインイン",
+  "onboardingButtonApple": "Appleでサインイン",
+  "accountAppBarTitle": "アカウント",
+  "accountNotSignedIn": "サインインしていません",
+  "accountNoName": "名前なし",
+  "accountNoEmail": "メールなし",
+  "accountButtonLogout": "ログアウト",
+  "accountDialogLogoutTitle": "ログアウト",
+  "accountDialogLogoutMessage": "本当にログアウトしますか？",
+  "accountButtonDeleteAccount": "アカウントを削除",
+  "accountDialogDeleteTitle": "アカウント削除",
+  "accountDialogDeleteMessage": "本当に削除しますか？この操作は取り消せません。",
+  "accountDialogDeleteConfirm": "削除する",
+  "accountDialogFinalTitle": "最終確認",
+  "accountDialogFinalMessage": "全てのデータが完全に削除されます。",
+  "accountDialogFinalConfirm": "完全に削除する",
+  "accountDialogReauthTitle": "再認証が必要です",
+  "accountDialogReauthMessage": "アカウントを削除するには、再度ログインしてください。"
+}

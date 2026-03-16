@@ -1,0 +1,13 @@
+{
+  "appTitle": "まめログ",
+  "navLibrary": "ライブラリ",
+  "navRecords": "記録",
+  "navAccount": "アカウント",
+  "notificationExtractionTitle": "抽出完了",
+  "notificationExtractionBody": "コーヒー情報を抽出しました",
+  "commonButtonCancel": "キャンセル",
+  "commonButtonSave": "保存",
+  "commonButtonOk": "OK",
+  "commonButtonRetry": "リトライ",
+  "homeWelcome": "まめログへようこそ"
+}

@@ -1,0 +1,19 @@
+targets:
+  $default:
+    builders:
+      slang_build_runner:
+        options:
+          base_locale: ja
+          fallback_strategy: base_locale
+          input_directory: assets/i18n
+          input_file_pattern: .i18n.json
+          output_directory: lib/src/gen/i18n
+          output_file_name: translations.g.dart
+          translate_var: t
+          locale_handling: true
+          flutter_integration: true
+          lazy: false
+          flat_map: false
+          translation_overrides: false
+          timestamp: false
+          statistics: false

@@ -1,0 +1,10 @@
+targets:
+  $default:
+    builders:
+      injectable_generator:injectable_builder:
+        options:
+          # Micro module settings if needed
+          auto_register: true
+      injectable_generator:injectable_config_builder:
+        options:
+          auto_register: true

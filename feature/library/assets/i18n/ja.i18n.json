@@ -1,0 +1,13 @@
+{
+  "listAppBarTitle": "マイライブラリ",
+  "listEmptyTitle": "ライブラリは空です",
+  "listEmptySubtitle": "最初のコーヒー豆の袋をスキャンしましょう！",
+  "listButtonAddCoffee": "コーヒーを追加",
+  "detailAppBarTitle": "コーヒー詳細",
+  "detailRoastLevel": "焙煎度",
+  "detailBeanType": "豆の種類",
+  "detailUnknown": "不明",
+  "detailButtonAddTasting": "テイスティングノートを追加",
+  "detailSectionDescription": "説明",
+  "detailNoDescription": "説明はありません。"
+}
