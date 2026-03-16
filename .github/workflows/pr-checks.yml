@@ -29,7 +29,7 @@ jobs:
     uses: ./.github/workflows/_changes.yml
 
   actionlint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs: changes
     if: needs.changes.outputs.ci == 'true'
     timeout-minutes: 5
@@ -41,8 +41,11 @@ jobs:
         with:
           persist-credentials: false
 
+      # arm64 未対応ツール (Flutter, CocoaPods 等) を除外
       - name: Setup mise
         uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
+        env:
+          MISE_DISABLE_TOOLS: flutter,java,ruby,gem:cocoapods
 
       - name: Run actionlint
         uses: reviewdog/action-actionlint@e58ee9d111489c31395fbe4857b0be6e7635dbda # v1.70.0
@@ -52,7 +55,7 @@ jobs:
           reporter: github-pr-review
 
   format:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs: changes
     if: needs.changes.outputs.format == 'true'
     timeout-minutes: 5
@@ -66,6 +69,8 @@ jobs:
 
       - name: Setup mise
         uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
+        env:
+          MISE_DISABLE_TOOLS: flutter,java,ruby,gem:cocoapods
 
       - name: Setup Bun
         uses: ./.github/actions/setup-bun
@@ -74,7 +79,7 @@ jobs:
         run: bun run format
 
   doc-lint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     needs: changes
     if: needs.changes.outputs.docs == 'true'
     timeout-minutes: 5
@@ -88,6 +93,8 @@ jobs:
 
       - name: Setup mise
         uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
+        env:
+          MISE_DISABLE_TOOLS: flutter,java,ruby,gem:cocoapods
 
       - name: Setup Bun
         uses: ./.github/actions/setup-bun
@@ -95,6 +102,7 @@ jobs:
       - name: Run document structure lint
         run: bun run lint:docs
 
+  # x64 必須: Flutter SDK が arm64 Linux ホストを未サポート
   analyze:
     runs-on: ubuntu-24.04
     needs: changes
@@ -126,6 +134,7 @@ jobs:
       - name: Run analyze
         run: melos run analyze --no-select
 
+  # x64 必須: Flutter SDK が arm64 Linux ホストを未サポート
   test:
     runs-on: ubuntu-24.04
     needs: changes
@@ -159,7 +168,7 @@ jobs:
 
   gate:
     name: Checks
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 1
     needs:
       - actionlint

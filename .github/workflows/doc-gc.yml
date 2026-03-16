@@ -19,7 +19,7 @@ defaults:
 
 jobs:
   freshness-check:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 10
     permissions:
       contents: read
@@ -33,6 +33,8 @@ jobs:
 
       - name: Setup mise
         uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
+        env:
+          MISE_DISABLE_TOOLS: flutter,java,ruby,gem:cocoapods
 
       - name: Setup Bun
         uses: ./.github/actions/setup-bun
@@ -86,7 +88,7 @@ jobs:
             }
 
   quality-score:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 10
     permissions:
       contents: read
@@ -109,6 +111,8 @@ jobs:
         uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
         with:
           github_api_token: ${{ steps.app-token.outputs.token }}
+        env:
+          MISE_DISABLE_TOOLS: flutter,java,ruby,gem:cocoapods
 
       - name: Setup Bun
         uses: ./.github/actions/setup-bun

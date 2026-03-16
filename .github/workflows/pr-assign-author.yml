@@ -24,7 +24,7 @@ jobs:
   assign-author:
     if: ${{ !contains(github.actor, '[bot]') }}
     name: Assign author to PR
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 5
     steps:
       - name: Create GitHub App Token
