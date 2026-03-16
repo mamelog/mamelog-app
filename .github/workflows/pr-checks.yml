@@ -95,6 +95,7 @@ jobs:
       - name: Run document structure lint
         run: bun run lint:docs
 
+  # x64 必須: Flutter SDK が arm64 Linux ホストを未サポート
   analyze:
     runs-on: ubuntu-24.04
     needs: changes
@@ -126,6 +127,7 @@ jobs:
       - name: Run analyze
         run: melos run analyze --no-select
 
+  # x64 必須: Flutter SDK が arm64 Linux ホストを未サポート
   test:
     runs-on: ubuntu-24.04
     needs: changes
