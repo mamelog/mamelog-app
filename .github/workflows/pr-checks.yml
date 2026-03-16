@@ -41,8 +41,11 @@ jobs:
         with:
           persist-credentials: false
 
+      # arm64 未対応ツール (Flutter, CocoaPods 等) を除外
       - name: Setup mise
         uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
+        env:
+          MISE_DISABLE_TOOLS: flutter,java,ruby,gem:cocoapods
 
       - name: Run actionlint
         uses: reviewdog/action-actionlint@e58ee9d111489c31395fbe4857b0be6e7635dbda # v1.70.0
@@ -66,6 +69,8 @@ jobs:
 
       - name: Setup mise
         uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
+        env:
+          MISE_DISABLE_TOOLS: flutter,java,ruby,gem:cocoapods
 
       - name: Setup Bun
         uses: ./.github/actions/setup-bun
@@ -88,6 +93,8 @@ jobs:
 
       - name: Setup mise
         uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
+        env:
+          MISE_DISABLE_TOOLS: flutter,java,ruby,gem:cocoapods
 
       - name: Setup Bun
         uses: ./.github/actions/setup-bun
